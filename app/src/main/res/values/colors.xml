@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Benitoite V2 Color Palette -->
+    <color name="navy_dark">#0e1b40</color>
+    <color name="navy_medium">#042262</color>
+    <color name="blue_primary">#1d3487</color>
+    <color name="blue_light">#4b5792</color>
+    <color name="gray_blue">#d7d5e0</color>
 </resources>

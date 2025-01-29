@@ -3,76 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
     android:background="@color/benitoite_lightest">
 
     <ImageView
-        android:id="@+id/ivPlaceholder"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/placeholder_image"
-        android:contentDescription="Placeholder image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4"
-        android:visibility="visible"
-        android:alpha="1" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="32dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
+        android:id="@+id/ivLogo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_launcher_foreground"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="visible"
-        android:alpha="1"
-        app:cardBackgroundColor="@color/white">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/benitoite_dark" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:layout_marginBottom="16dp">
-
-            <ImageView
-                android:id="@+id/ivIcon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_water_drop"
-                app:tint="@color/benitoite_dark"
-                android:contentDescription="Water drop icon" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Let's start your\nhealth journey today\nwith us!"
-                android:textColor="@color/benitoite_darkest"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnContinue"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:text="Continue"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/benitoite_darkest"
-                app:cornerRadius="8dp" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/tvAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="WaterTrack+"
+        android:textColor="@color/benitoite_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivLogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

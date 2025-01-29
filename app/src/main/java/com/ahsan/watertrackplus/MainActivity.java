@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,19 +19,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Make navigation bar transparent
+        // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        );
         
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         setupBottomNavigation();
         setupBackNavigation();
+
+        if (savedInstanceState == null) {
+            // Load HomeFragment as the default fragment
+            loadFragment(new HomeFragment());
+        }
     }
 
     private void setupBottomNavigation() {
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 Fragment currentFragment = getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_container);
+                    .findFragmentById(R.id.fragmentContainer);
 
                 // If we're not on the home tab
                 if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home) {
@@ -80,16 +81,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-            .beginTransaction()
-            .setCustomAnimations(
-                android.R.anim.fade_in,
-                android.R.anim.fade_out,
-                android.R.anim.fade_in,
-                android.R.anim.fade_out
-            )
-            .replace(R.id.fragment_container, fragment)
-            .commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, fragment);
+        transaction.commit();
     }
 
     private void showToast(String message) {

@@ -6,20 +6,28 @@
         <item name="android:colorControlNormal">@color/benitoite_dark</item>
     </style>
 
-    <style name="BottomNavigationStyle">
-        <item name="android:background">@color/white</item>
+    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">16dp</item>
         <item name="itemIconTint">@color/bottom_nav_colors</item>
         <item name="itemTextColor">@color/bottom_nav_colors</item>
-        <item name="itemIconSize">22dp</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
         <item name="labelVisibilityMode">labeled</item>
         <item name="itemTextAppearanceActive">@style/BottomNavigationTextAppearance</item>
         <item name="itemTextAppearanceInactive">@style/BottomNavigationTextAppearance</item>
-        <item name="elevation">8dp</item>
     </style>
 
     <style name="BottomNavigationTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">11sp</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Chip.Choice.Custom">
+        <item name="android:textColor">@color/benitoite_dark</item>
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="chipStrokeColor">@color/benitoite_light</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources> 

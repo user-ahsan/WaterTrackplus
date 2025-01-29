@@ -10,4 +10,9 @@
     <color name="benitoite_light">#4b5792</color>
     <color name="benitoite_lightest">#d7d5e0</color>
     <color name="ic_launcher_background">#F5F5F5</color>
+    
+    <!-- Card Colors -->
+    <color name="card_background">@color/white</color>
+    <color name="card_text_primary">@color/benitoite_dark</color>
+    <color name="card_text_secondary">@color/benitoite_medium</color>
 </resources>

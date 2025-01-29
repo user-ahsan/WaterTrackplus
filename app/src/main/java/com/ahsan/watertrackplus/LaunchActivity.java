@@ -2,15 +2,17 @@ package com.ahsan.watertrackplus;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
-import com.google.android.material.button.MaterialButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class LaunchActivity extends AppCompatActivity {
+
+    private ImageView ivLogo;
+    private TextView tvAppName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,43 +28,38 @@ public class LaunchActivity extends AppCompatActivity {
         
         setContentView(R.layout.activity_launch);
 
-        // Find views
-        View placeholderImage = findViewById(R.id.ivPlaceholder);
-        View cardContent = findViewById(R.id.cardContent);
-        MaterialButton btnContinue = findViewById(R.id.btnContinue);
+        // Initialize views
+        ivLogo = findViewById(R.id.ivLogo);
+        tvAppName = findViewById(R.id.tvAppName);
 
-        // Set initial visibility
-        placeholderImage.setAlpha(0f);
-        cardContent.setAlpha(0f);
-        placeholderImage.setTranslationY(50f);
-        cardContent.setTranslationY(50f);
-
-        // Load animation
-        android.view.animation.Animation fadeSlideUp = AnimationUtils.loadAnimation(this, R.anim.fade_slide_up);
-        fadeSlideUp.setDuration(800);
+        // Set initial visibility and position
+        ivLogo.setAlpha(0f);
+        tvAppName.setAlpha(0f);
+        ivLogo.setTranslationY(50f);
+        tvAppName.setTranslationY(50f);
 
         // Start animations with different delays
-        placeholderImage.postDelayed(() -> {
-            placeholderImage.animate()
+        ivLogo.postDelayed(() -> {
+            ivLogo.animate()
                 .alpha(1f)
                 .translationY(0f)
                 .setDuration(800)
                 .start();
         }, 100);
         
-        cardContent.postDelayed(() -> {
-            cardContent.animate()
+        tvAppName.postDelayed(() -> {
+            tvAppName.animate()
                 .alpha(1f)
                 .translationY(0f)
                 .setDuration(800)
                 .start();
         }, 300);
 
-        // Set click listener for Continue button
-        btnContinue.setOnClickListener(v -> {
-            Intent intent = new Intent(LaunchActivity.this, UserInfoActivity.class);
+        // Auto-navigate to MainActivity after delay
+        ivLogo.postDelayed(() -> {
+            Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
             startActivity(intent);
-            finish(); // Close the launch activity
-        });
+            finish();
+        }, 2000); // 2 seconds delay
     }
 } 

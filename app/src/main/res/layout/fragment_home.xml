@@ -4,135 +4,243 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/benitoite_lightest"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+        <!-- Title Section with proper top margin -->
+        <Space
+            android:id="@+id/statusBarSpace"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:minHeight="24dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivWaterDrop"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_launcher_foreground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusBarSpace"
+            android:layout_marginTop="16dp"
+            app:tint="@color/benitoite_dark" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:text="Overview"
             android:textColor="@color/benitoite_darkest"
-            android:textSize="24sp"
+            android:textSize="32sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/ivWaterDrop"
+            app:layout_constraintTop_toTopOf="@id/ivWaterDrop"
+            app:layout_constraintBottom_toBottomOf="@id/ivWaterDrop" />
 
+        <!-- Health Score Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardHealth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle">
+            app:cardBackgroundColor="@color/card_background"
+            app:layout_constraintTop_toBottomOf="@id/ivWaterDrop">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Health Score"
-                    android:textColor="@color/benitoite_dark"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:layout_marginEnd="24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvHealthScore"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Health Score"
+                        android:textColor="@color/card_text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Based on your overview health tracking, your score is 78 and consider good..."
+                        android:textColor="@color/card_text_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvHealthScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:text="78"
-                    android:textColor="@color/benitoite_darkest"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:textColor="@color/card_text_primary"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Add Water Record Card -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardStats"
+            android:id="@+id/cardAddWater"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@id/cardHealth">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:padding="16dp">
 
+                <ImageView
+                    android:id="@+id/ivAddWater"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_water_drop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/card_text_primary" />
+
                 <TextView
+                    android:id="@+id/tvAddWaterTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Today's Progress"
-                    android:textColor="@color/benitoite_dark"
-                    android:textSize="16sp" />
+                    android:layout_marginStart="8dp"
+                    android:text="Add Record"
+                    android:textColor="@color/card_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/ivAddWater"
+                    app:layout_constraintTop_toTopOf="@id/ivAddWater"
+                    app:layout_constraintBottom_toBottomOf="@id/ivAddWater" />
 
+                <!-- Quick Amount Buttons -->
                 <LinearLayout
+                    android:id="@+id/chipContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    app:layout_constraintTop_toBottomOf="@id/tvAddWaterTitle">
 
-                    <LinearLayout
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip150ml"
+                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginEnd="4dp"
+                        android:text="150ml"
+                        android:textAlignment="center" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Water Intake"
-                            android:textColor="@color/benitoite_dark"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvWaterIntake"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="1.5L"
-                            android:textColor="@color/benitoite_darkest"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip250ml"
+                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginHorizontal="4dp"
+                        android:text="250ml"
+                        android:textAlignment="center" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Goal"
-                            android:textColor="@color/benitoite_dark"
-                            android:textSize="14sp" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip500ml"
+                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="4dp"
+                        android:text="500ml"
+                        android:textAlignment="center" />
 
-                        <TextView
-                            android:id="@+id/tvGoal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="2.5L"
-                            android:textColor="@color/benitoite_darkest"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCustom"
+                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="Custom"
+                        android:textAlignment="center" />
+
                 </LinearLayout>
-            </LinearLayout>
+
+                <!-- Custom Amount Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCustomAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="Enter amount (ml)"
+                    android:visibility="gone"
+                    android:textColorHint="@color/benitoite_medium"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/benitoite_dark"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxStrokeColor="@color/benitoite_dark"
+                    app:boxStrokeWidth="1dp"
+                    app:hintTextColor="@color/benitoite_dark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chipContainer">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCustomAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:textColor="@color/benitoite_darkest"
+                        android:textCursorDrawable="@null" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Add Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Add Record"
+                    android:textAllCaps="false"
+                    app:cornerRadius="20dp"
+                    android:backgroundTint="@color/benitoite_dark"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tilCustomAmount" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,5 +5,18 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.WaterTrack" parent="Base.Theme.WaterTrack" />
+    <style name="Theme.WaterTrack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Status bar -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        
+        <!-- Colors -->
+        <item name="colorPrimary">@color/benitoite_dark</item>
+        <item name="colorPrimaryVariant">@color/benitoite_darkest</item>
+        <item name="colorSecondary">@color/benitoite_medium</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@color/benitoite_lightest</item>
+    </style>
 </resources>

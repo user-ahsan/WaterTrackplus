@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColorPrimary">@color/benitoite_darkest</item>
+        <item name="android:colorControlNormal">@color/benitoite_dark</item>
+    </style>
+
+    <style name="BottomNavigationStyle">
+        <item name="android:background">@color/white</item>
+        <item name="itemIconTint">@color/bottom_nav_colors</item>
+        <item name="itemTextColor">@color/bottom_nav_colors</item>
+        <item name="itemIconSize">22dp</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavigationTextAppearance</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavigationTextAppearance</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="BottomNavigationTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+</resources> 

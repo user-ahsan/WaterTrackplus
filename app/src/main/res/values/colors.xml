@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Benitoite V2 Color Palette -->
+    <color name="benitoite_darkest">#0e1b40</color>
+    <color name="benitoite_dark">#042262</color>
+    <color name="benitoite_medium">#1d3487</color>
+    <color name="benitoite_light">#4b5792</color>
+    <color name="benitoite_lightest">#d7d5e0</color>
+    <color name="ic_launcher_background">#F5F5F5</color>
+</resources>

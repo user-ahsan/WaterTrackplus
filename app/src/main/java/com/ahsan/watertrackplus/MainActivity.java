@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(new DiscoverFragment());
                 return true;
             } else if (itemId == R.id.navigation_me) {
-                loadFragment(new ProfileFragment());
+                loadFragment(new MeFragment());
                 return true;
             }
             return false;

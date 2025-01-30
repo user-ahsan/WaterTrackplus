@@ -4,15 +4,18 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- Benitoite V2 Color Palette -->
-    <color name="benitoite_darkest">#0e1b40</color>
-    <color name="benitoite_dark">#042262</color>
-    <color name="benitoite_medium">#1d3487</color>
-    <color name="benitoite_light">#4b5792</color>
-    <color name="benitoite_lightest">#d7d5e0</color>
+    <color name="benitoite_darkest">#FF1A237E</color>
+    <color name="benitoite_dark">#FF283593</color>
+    <color name="benitoite_medium">#FF3949AB</color>
+    <color name="benitoite_light">#FF5C6BC0</color>
+    <color name="benitoite_lightest">#FFE8EAF6</color>
     <color name="ic_launcher_background">#F5F5F5</color>
     
     <!-- Card Colors -->
-    <color name="card_background">@color/white</color>
-    <color name="card_text_primary">@color/benitoite_dark</color>
-    <color name="card_text_secondary">@color/benitoite_medium</color>
+    <color name="card_background">#FFFAFAFA</color>
+    <color name="card_text_primary">@color/benitoite_darkest</color>
+    <color name="card_text_secondary">@color/benitoite_dark</color>
+    
+    <!-- Navigation Colors -->
+    <color name="nav_unselected_light">#FF757575</color>
 </resources>

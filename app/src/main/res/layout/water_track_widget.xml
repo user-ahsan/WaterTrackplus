@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/system_neutral1_900">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:baselineAligned="false">
+
+        <!-- Header with better touch target -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:minHeight="48dp">
+
+            <ImageView
+                android:id="@+id/widget_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_water_drop"
+                android:tint="@android:color/system_accent1_100"
+                android:importantForAccessibility="no"/>
+
+            <TextView
+                android:id="@+id/widget_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/water_intake_title"
+                android:textColor="@android:color/system_neutral1_0"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:contentDescription="@string/water_intake_title"/>
+        </LinearLayout>
+
+        <!-- Progress Section with better accessibility -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/widget_progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/system_neutral1_0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:contentDescription="@string/progress_description"
+                tools:text="@string/widget_progress_format"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/widget_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:trackCornerRadius="8dp"
+                app:trackThickness="8dp"
+                app:indicatorColor="@android:color/system_accent1_100"
+                app:trackColor="@android:color/system_neutral1_800"
+                android:importantForAccessibility="yes"/>
+
+            <TextView
+                android:id="@+id/widget_remaining_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@android:color/system_neutral1_100"
+                android:textSize="14sp"
+                android:contentDescription="@string/remaining_description"
+                tools:text="@string/widget_remaining_format"/>
+        </LinearLayout>
+
+        <!-- Quick Add Button with better touch target -->
+        <Button
+            android:id="@+id/widget_quick_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="48dp"
+            android:text="@string/quick_add"
+            android:textColor="@android:color/system_neutral1_900"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:contentDescription="@string/quick_add_description"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView> 

@@ -4,11 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/benitoite_light"
-    app:strokeWidth="1dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,8 +31,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nutrition"
-                android:textColor="@color/benitoite_dark"
-                android:textSize="14sp"/>
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="?attr/colorPrimary"/>
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -43,9 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="More about Apples: Benefits, nutrition, and tips"
-                android:textColor="@color/benitoite_darkest"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="?android:textColorPrimary"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -59,7 +55,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     app:srcCompat="@drawable/baseline_favorite_24"
-                    app:tint="@color/benitoite_dark"/>
+                    app:tint="?attr/colorPrimary"/>
 
                 <TextView
                     android:id="@+id/tvLikes"
@@ -67,8 +63,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:text="78 votes"
-                    android:textColor="@color/card_text_secondary"
-                    android:textSize="12sp"/>
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?android:textColorSecondary"/>
 
                 <TextView
                     android:id="@+id/tvReadMore"
@@ -76,8 +72,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="Tell me more ›"
-                    android:textColor="@color/benitoite_dark"
-                    android:textSize="12sp"/>
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?attr/colorPrimary"/>
             </LinearLayout>
         </LinearLayout>
 

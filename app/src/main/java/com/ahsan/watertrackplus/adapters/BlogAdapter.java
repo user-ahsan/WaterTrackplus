@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ahsan.watertrackplus.R;
 import com.ahsan.watertrackplus.models.BlogItem;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +30,7 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
     }
 
     public void setBlogItems(List<BlogItem> blogItems) {
-        this.blogItems = new ArrayList<>(blogItems);
-        notifyDataSetChanged();
-    }
-
-    public void addItems(List<BlogItem> newItems) {
-        int startPosition = blogItems.size();
-        blogItems.addAll(newItems);
-        notifyItemRangeInserted(startPosition, newItems.size());
-    }
-
-    public void clearItems() {
-        blogItems.clear();
+        this.blogItems = blogItems;
         notifyDataSetChanged();
     }
 
@@ -91,14 +79,13 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
             tvCategory.setText(item.getCategory());
             tvTitle.setText(item.getTitle());
             tvLikes.setText(item.getLikes() + " votes");
-            
-            // Load image using Glide
-            Glide.with(itemView.getContext())
-                .load(item.getImageUrl())
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
-                .centerCrop()
-                .into(ivBlogImage);
+            // Set placeholder image
+            ivBlogImage.setImageResource(R.drawable.placeholder_image);
+            // TODO: When you implement image loading library:
+            // Glide.with(itemView.getContext())
+            //     .load(item.getImageUrl())
+            //     .placeholder(R.drawable.placeholder_image)
+            //     .into(ivBlogImage);
         }
     }
 } 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget Colors - Dark Theme -->
+    <color name="widget_background">#1F1F1F</color>
+    <color name="widget_stroke">#1FFFFFFF</color>
+    <color name="widget_text">#DEFFFFFF</color>
+    <color name="widget_text_secondary">#99FFFFFF</color>
+    <color name="widget_progress_background">#1FFFFFFF</color>
+    <color name="widget_progress_fill">@color/primary</color>
+    <color name="widget_button_background">#2D2D2D</color>
+    <color name="widget_button_stroke">#1FFFFFFF</color>
+    <color name="widget_button_text">#DEFFFFFF</color>
+</resources> 

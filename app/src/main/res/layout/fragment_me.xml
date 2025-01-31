@@ -101,7 +101,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Notification Settings -->
+        <!-- Notification & Widget Settings -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardNotificationSettings"
             android:layout_width="match_parent"
@@ -119,6 +119,7 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
+                <!-- Notification Settings -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,38 +137,33 @@
                     android:textColor="@color/card_text_secondary"
                     android:textSize="16sp"/>
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Widget Settings Section -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorOutline">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                <!-- Widget Settings -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="16dp"
+                    android:background="?android:attr/listDivider"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
                     android:text="Widget Settings"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+                    android:textColor="@color/card_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Quick Add Amount"
+                    android:textColor="@color/card_text_secondary"
+                    android:textSize="16sp"/>
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/quick_add_amount_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
                     android:valueFrom="50"
                     android:valueTo="1000"
@@ -178,13 +174,21 @@
                     android:id="@+id/quick_add_amount_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp"
                     android:text="Quick add amount: 250ml"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"/>
+                    android:textColor="@color/card_text_secondary"
+                    android:textSize="14sp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveWidgetSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Save Widget Settings"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/benitoite_medium"
+                    style="@style/Widget.Material3.Button"/>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

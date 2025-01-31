@@ -21,28 +21,17 @@
             android:minHeight="24dp"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ivWaterDrop"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_launcher_foreground"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statusBarSpace"
-            android:layout_marginTop="16dp"
-            app:tint="@color/benitoite_dark" />
-
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
             android:text="Overview"
             android:textColor="@color/benitoite_darkest"
             android:textSize="32sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/ivWaterDrop"
-            app:layout_constraintTop_toTopOf="@id/ivWaterDrop"
-            app:layout_constraintBottom_toBottomOf="@id/ivWaterDrop" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusBarSpace"
+            android:layout_marginTop="16dp" />
 
         <!-- Health Score Card -->
         <androidx.cardview.widget.CardView
@@ -53,7 +42,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:cardBackgroundColor="@color/card_background"
-            app:layout_constraintTop_toBottomOf="@id/ivWaterDrop">
+            app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -66,38 +55,138 @@
                     android:orientation="vertical"
                     android:layout_marginEnd="24dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/tvHealthScore"
+                    app:layout_constraintEnd_toStartOf="@id/scoreContainer"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Health Score"
+                        android:text="Water Intake"
                         android:textColor="@color/card_text_primary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvWaterIntakeStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Based on your overview health tracking, your score is 78 and consider good..."
+                        android:text="Track your daily water intake progress..."
                         android:textColor="@color/card_text_secondary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvHealthScore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="78"
-                    android:textColor="@color/card_text_primary"
-                    android:textSize="48sp"
-                    android:textStyle="bold"
+                <FrameLayout
+                    android:id="@+id/scoreContainer"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/circularProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:progress="78"
+                        app:indicatorSize="80dp"
+                        app:trackThickness="6dp"
+                        app:trackCornerRadius="3dp"
+                        app:trackColor="@color/benitoite_lightest"
+                        app:indicatorColor="@color/benitoite_dark"/>
+
+                    <TextView
+                        android:id="@+id/tvHealthScore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="78"
+                        android:textColor="@color/card_text_primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"/>
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Daily Goal Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDailyGoal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:layout_constraintTop_toBottomOf="@id/cardHealth">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/ivGoal"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_target"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/card_text_primary" />
+
+                <TextView
+                    android:id="@+id/tvDailyGoalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Daily Goal"
+                    android:textColor="@color/card_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/ivGoal"
+                    app:layout_constraintTop_toTopOf="@id/ivGoal"
+                    app:layout_constraintBottom_toBottomOf="@id/ivGoal" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDailyGoal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:hint="Enter daily goal (ml)"
+                    app:endIconMode="clear_text"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btnUpdateGoal"
+                    app:layout_constraintTop_toBottomOf="@id/tvDailyGoalTitle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDailyGoal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="5" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUpdateGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update"
+                    app:cornerRadius="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tilDailyGoal"
+                    app:layout_constraintBottom_toBottomOf="@id/tilDailyGoal" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -111,7 +200,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:cardBackgroundColor="@color/card_background"
-            app:layout_constraintTop_toBottomOf="@id/cardHealth">
+            app:layout_constraintTop_toBottomOf="@id/cardDailyGoal">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -224,21 +313,6 @@
                         android:textColor="@color/benitoite_darkest"
                         android:textCursorDrawable="@null" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Add Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAdd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Add Record"
-                    android:textAllCaps="false"
-                    app:cornerRadius="20dp"
-                    android:backgroundTint="@color/benitoite_dark"
-                    android:textColor="@color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tilCustomAmount" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

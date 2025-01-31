@@ -11,13 +11,13 @@
     <string name="quick_add_description">Quickly add water intake</string>
     
     <!-- Widget Error States -->
-    <string name="widget_error_update">Update Error</string>
-    <string name="widget_error_retry">Tap to retry</string>
+    <string name="widget_error_update">Unable to update</string>
+    <string name="widget_error_retry">Please try again</string>
     
     <!-- Widget Format Strings -->
-    <string name="widget_progress_format">%.1f / %.1f L</string>
-    <string name="widget_remaining_format">%.1f L remaining</string>
-    <string name="widget_quick_add_format">+ %.0f ml</string>
+    <string name="widget_progress_format">%.1f/%.1fL</string>
+    <string name="widget_remaining_format">%.1fL remaining</string>
+    <string name="widget_quick_add_format">Quick Add %.0fml</string>
     
     <!-- Accessibility Strings -->
     <string name="widget_accessibility_progress">Current water intake: %.1f liters out of %.1f liters goal</string>

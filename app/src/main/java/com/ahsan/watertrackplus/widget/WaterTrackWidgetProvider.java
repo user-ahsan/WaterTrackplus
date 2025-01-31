@@ -38,6 +38,16 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
     private static final int MIN_UPDATE_INTERVAL = 15; // minutes
     private static final float DEFAULT_DAILY_GOAL = 2500f; // ml
     private static final float DEFAULT_QUICK_ADD = 250f; // ml
+    private static final java.text.SimpleDateFormat DATE_FORMAT;
+    
+    static {
+        DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+        DATE_FORMAT.setTimeZone(java.util.TimeZone.getDefault());
+    }
+
+    private String getCurrentDate() {
+        return DATE_FORMAT.format(new java.util.Date());
+    }
 
     @Override
     public void onEnabled(Context context) {
@@ -105,9 +115,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
     }
 
     private void handleQuickAdd(Context context, float amount) {
-        try {
-            // Get the database helper and preferences
-            WaterDbHelper dbHelper = new WaterDbHelper(context);
+        try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
             SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             
             // Get the latest values from database and preferences
@@ -120,7 +128,9 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "water_track")
                     .setSmallIcon(R.drawable.ic_water_drop)
                     .setContentTitle("Daily Goal Limit")
-                    .setContentText(String.format("Cannot exceed daily goal of %.0f ml (Current: %.0f ml)", dailyGoal, currentIntake))
+                    .setContentText(String.format(java.util.Locale.US, 
+                        "Cannot exceed daily goal of %.0f ml (Current: %.0f ml)", 
+                        dailyGoal, currentIntake))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true);
 
@@ -142,8 +152,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 // Update widget preferences with latest values
                 prefs.edit()
                     .putFloat("current_intake", totalIntake)
-                    .putString("last_update_date", new java.text.SimpleDateFormat("yyyy-MM-dd")
-                        .format(new java.util.Date()))
+                    .putString("last_update_date", getCurrentDate())
                     .apply();
 
                 // Update all widgets
@@ -165,7 +174,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "water_track")
                 .setSmallIcon(R.drawable.ic_water_drop)
                 .setContentTitle("Water Intake Added")
-                .setContentText(String.format("Added %.0f ml of water", amount))
+                .setContentText(String.format(java.util.Locale.US, "Added %.0f ml of water", amount))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
@@ -187,18 +196,18 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
             
             // Check if it's a new day or first launch
             String savedDate = prefs.getString("last_update_date", "");
-            String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd")
-                .format(new java.util.Date());
+            String currentDate = getCurrentDate();
             
             // If it's a new day or first launch, initialize the database
             if (!currentDate.equals(savedDate)) {
-                WaterDbHelper dbHelper = new WaterDbHelper(context);
-                float totalIntake = dbHelper.getTodayTotalIntake();
-                
-                prefs.edit()
-                    .putFloat("current_intake", totalIntake)
-                    .putString("last_update_date", currentDate)
-                    .apply();
+                try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
+                    float totalIntake = dbHelper.getTodayTotalIntake();
+                    
+                    prefs.edit()
+                        .putFloat("current_intake", totalIntake)
+                        .putString("last_update_date", currentDate)
+                        .apply();
+                }
             }
 
             float dailyGoal = prefs.getFloat("daily_goal", DEFAULT_DAILY_GOAL);
@@ -225,7 +234,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 flags
             );
             
-            String buttonText = String.format("+ %.0f ml", quickAddAmount);
+            String buttonText = String.format(java.util.Locale.US, "+ %.0f ml", quickAddAmount);
             views.setOnClickPendingIntent(R.id.widget_quick_add_button, quickAddPendingIntent);
             views.setTextViewText(R.id.widget_quick_add_button, buttonText);
 
@@ -285,7 +294,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
         views.setProgressBar(R.id.widget_progress_bar, 100, progress, false);
         
         // Update text views
-        String progressText = String.format(
+        String progressText = String.format(java.util.Locale.US,
             context.getString(R.string.widget_progress_format), 
             currentIntake/1000, 
             dailyGoal/1000
@@ -293,7 +302,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_progress_text, progressText);
         
         float remaining = Math.max(0, dailyGoal - currentIntake);
-        String remainingText = String.format(
+        String remainingText = String.format(java.util.Locale.US,
             context.getString(R.string.widget_remaining_format), 
             remaining/1000
         );

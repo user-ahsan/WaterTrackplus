@@ -141,7 +141,7 @@ public class MeFragment extends Fragment {
 
     private void updateQuickAddText(float value) {
         TextView quickAddText = rootView.findViewById(R.id.quick_add_amount_text);
-        quickAddText.setText(String.format("Quick add amount: %.0fml", value));
+        quickAddText.setText(String.format(java.util.Locale.US, "Quick add amount: %.0fml", value));
     }
 
     private void saveWidgetSettings() {

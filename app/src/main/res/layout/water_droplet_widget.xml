@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4dp">
+
+    <!-- Theme-aware background -->
+    <LinearLayout
+        android:id="@+id/widget_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/widget_card_background"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center"
+        android:baselineAligned="false">
+
+        <!-- Droplet container -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/water_droplet_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/water_droplet_vector"
+                android:contentDescription="@string/water_droplet_widget_description" />
+        </FrameLayout>
+
+        <!-- Progress section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+
+            <ProgressBar
+                android:id="@+id/widget_progress_bar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:progressDrawable="@drawable/progress_bar_drawable" />
+
+        </LinearLayout>
+
+        <!-- Score section -->
+        <TextView
+            android:id="@+id/widget_score_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:textColor="@color/widget_score_text"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
+
+    </LinearLayout>
+</FrameLayout> 

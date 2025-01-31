@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:maxLevel="10000"
+        android:minLevel="0">
+        <animated-vector android:drawable="@drawable/water_droplet_vector">
+            <target
+                android:name="water_group"
+                android:animation="@animator/water_fill_animation" />
+        </animated-vector>
+    </item>
+</level-list> 

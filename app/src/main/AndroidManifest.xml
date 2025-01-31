@@ -53,6 +53,16 @@
                 android:resource="@xml/water_track_widget_info" />
         </receiver>
 
+        <receiver android:name=".widget.WaterDropletWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/water_droplet_widget_info" />
+        </receiver>
+
         <!-- WorkManager Service -->
         <provider
             android:name="androidx.startup.InitializationProvider"

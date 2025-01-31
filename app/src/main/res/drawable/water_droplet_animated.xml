@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/water_droplet_vector">
+    
+    <target
+        android:name="droplet_fill"
+        android:animation="@animator/water_fill_animation" />
+        
+    <target
+        android:name="droplet_ripple"
+        android:animation="@animator/ripple_animation" />
+</animated-vector> 

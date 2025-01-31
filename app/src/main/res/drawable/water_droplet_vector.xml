@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="110dp"
+    android:height="110dp"
+    android:viewportWidth="110"
+    android:viewportHeight="110">
+
+    <!-- Droplet shadow -->
+    <path
+        android:name="droplet_shadow"
+        android:fillColor="@color/widget_droplet_shadow"
+        android:pathData="M55,17 C55,17 27,52 27,77 C27,95.5 40.5,109 57,109 C73.5,109 87,95.5 87,77 C87,52 55,17 55,17 Z" />
+
+    <!-- Droplet outline -->
+    <path
+        android:name="droplet_outline"
+        android:strokeColor="@color/widget_droplet_outline"
+        android:strokeWidth="2"
+        android:fillColor="@color/widget_progress_bar"
+        android:pathData="M55,15 C55,15 25,50 25,75 C25,93.5 38.5,107 55,107 C71.5,107 85,93.5 85,75 C85,50 55,15 55,15 Z" />
+
+    <!-- Water fill -->
+    <clip-path
+        android:name="water_mask"
+        android:pathData="M55,15 C55,15 25,50 25,75 C25,93.5 38.5,107 55,107 C71.5,107 85,93.5 85,75 C85,50 55,15 55,15 Z" />
+    
+    <path
+        android:name="water_fill"
+        android:fillColor="@color/widget_droplet_fill"
+        android:pathData="M25,15 L85,15 L85,107 L25,107 Z" />
+
+</vector> 

@@ -39,4 +39,11 @@
     <color name="progress_low">#FF5252</color>
     <color name="progress_medium">#FFB300</color>
     <color name="progress_high">#2196F3</color>
+    
+    <!-- Widget Colors -->
+    <color name="widget_progress_bar">#2196F3</color>
+    <color name="widget_score_text">#2196F3</color>
+    <color name="widget_droplet_outline">#2196F3</color>
+    <color name="widget_droplet_fill">#802196F3</color>
+    <color name="widget_droplet_shadow">#1A000000</color>
 </resources>

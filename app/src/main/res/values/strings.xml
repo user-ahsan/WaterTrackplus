@@ -11,16 +11,18 @@
     <string name="quick_add_description">Quickly add water intake</string>
     
     <!-- Widget Error States -->
-    <string name="widget_error_update">Unable to update</string>
+    <string name="widget_error_update">Error updating widget</string>
     <string name="widget_error_retry">Please try again</string>
     
     <!-- Widget Format Strings -->
-    <string name="widget_progress_format">%.1f/%.1fL</string>
-    <string name="widget_remaining_format">%.1fL remaining</string>
-    <string name="widget_quick_add_format">Quick Add %.0fml</string>
+    <string name="widget_progress_format">%.1f/%.1f L</string>
+    <string name="widget_remaining_format">%.1f L remaining</string>
+    <string name="widget_quick_add_format">Quick Add %.0f ml</string>
     
     <!-- Accessibility Strings -->
     <string name="widget_accessibility_progress">Current water intake: %.1f liters out of %.1f liters goal</string>
     <string name="widget_accessibility_remaining">%.1f liters remaining to reach your daily goal</string>
     <string name="widget_accessibility_quick_add">Quick add water button</string>
+
+    <string name="water_droplet_widget_description">Water intake progress shown as an animated water droplet</string>
 </resources>

@@ -27,6 +27,7 @@ import com.ahsan.watertrackplus.widget.WaterTrackWidgetProvider;
 import com.ahsan.watertrackplus.utils.WaterIntakeManager;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.ahsan.watertrackplus.widget.WidgetUpdateHelper;
 
 public class HomeFragment extends BaseFragment {
     
@@ -357,17 +358,8 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void updateWidget() {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(requireContext());
-        ComponentName widgetComponent = new ComponentName(requireContext(), WaterTrackWidgetProvider.class);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponent);
-        
-        if (appWidgetIds != null && appWidgetIds.length > 0) {
-            // Update all widgets
-            Intent updateIntent = new Intent(requireContext(), WaterTrackWidgetProvider.class)
-                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            requireContext().sendBroadcast(updateIntent);
-        }
+        // Update both widgets using the helper
+        WidgetUpdateHelper.updateAllWidgets(requireContext());
     }
 
     @Override

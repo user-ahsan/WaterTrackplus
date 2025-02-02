@@ -35,6 +35,8 @@ import android.widget.TextView;
 import java.util.Random;
 import java.util.Calendar;
 import android.widget.ProgressBar;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArticleClickListener {
 
@@ -51,22 +53,27 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
     private ProgressBar loadMoreProgress;
     private NewsApiService newsApiService;
     private SharedPreferences sharedPreferences;
+    private View rootView;
+    private ChipGroup chipGroupCategories;
+    private String currentCategory = "All";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_discover, container, false);
+        rootView = inflater.inflate(R.layout.fragment_discover, container, false);
         
-        swipeRefresh = view.findViewById(R.id.swipeRefresh);
-        rvArticles = view.findViewById(R.id.rvArticles);
-        errorView = view.findViewById(R.id.errorView);
-        shimmerLayout = view.findViewById(R.id.shimmerLayout);
-        loadMoreProgress = view.findViewById(R.id.loadMoreProgress);
+        swipeRefresh = rootView.findViewById(R.id.swipeRefresh);
+        rvArticles = rootView.findViewById(R.id.rvArticles);
+        errorView = rootView.findViewById(R.id.errorView);
+        shimmerLayout = rootView.findViewById(R.id.shimmerLayout);
+        loadMoreProgress = rootView.findViewById(R.id.loadMoreProgress);
+        chipGroupCategories = rootView.findViewById(R.id.chipGroupCategories);
 
         setupRecyclerView();
         setupSwipeRefresh();
+        setupChipGroup();
         loadContent(true);
         
-        return view;
+        return rootView;
     }
 
     @Override
@@ -137,11 +144,13 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
 
                 // Pull-up refresh when at the bottom
                 if (!isLoading && dy < 0 && lastVisibleItem == totalItemCount - 1) {
-                    loadMoreProgress.setVisibility(View.VISIBLE);
-                    currentPage = 1;
-                    articleAdapter.clearArticles();
-                    articleAdapter.setHasMoreItems(true);
-                    loadContent(true);
+                    if (articleAdapter.getHasMoreItems()) {
+                        loadMoreProgress.setVisibility(View.VISIBLE);
+                        currentPage = 1;
+                        articleAdapter.clearArticles();
+                        articleAdapter.setHasMoreItems(true);
+                        loadContent(true);
+                    }
                 }
             }
 
@@ -149,10 +158,14 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 
-                // Show pull-up refresh hint when at bottom
+                // Show appropriate message when at bottom
                 if (!isLoading && newState == RecyclerView.SCROLL_STATE_IDLE &&
                     layoutManager.findLastCompletelyVisibleItemPosition() == articleAdapter.getItemCount() - 1) {
-                    MaterialToast.showInfo(requireContext(), "Pull up to refresh");
+                    if (articleAdapter.getHasMoreItems()) {
+                        MaterialToast.showInfo(requireContext(), "Pull up to refresh");
+                    } else {
+                        MaterialToast.showInfo(requireContext(), "No more articles available");
+                    }
                 }
             }
         });
@@ -166,6 +179,16 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
             articleAdapter.clearArticles();
             articleAdapter.setHasMoreItems(true);
             loadContent(true);
+        });
+    }
+
+    private void setupChipGroup() {
+        chipGroupCategories.setOnCheckedChangeListener((group, checkedId) -> {
+            Chip chip = group.findViewById(checkedId);
+            if (chip != null) {
+                currentCategory = chip.getText().toString();
+                loadContent(true);
+            }
         });
     }
 
@@ -211,7 +234,7 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
 
         // Make API call
         service.getArticles(
-                "water health hydration wellness drinking-water",
+                currentCategory,
                 NEWS_API_KEY,
                 ARTICLES_PER_PAGE,
                 currentPage,
@@ -230,7 +253,7 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
 
                 // Check loading time
                 long loadTime = System.currentTimeMillis() - startTime;
-                if (loadTime > 5000) { // If loading took more than 5 seconds
+                if (loadTime > 5000) {
                     MaterialToast.showWarning(requireContext(), 
                         "Slow internet connection detected. Some images may take longer to load.");
                 }
@@ -242,12 +265,20 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
                         errorView.setVisibility(View.GONE);
                         articleAdapter.setArticles(articles, isRefresh);
                         currentPage++;
+                        
+                        // Check if this is the last page (less articles than requested)
+                        if (articles.size() < ARTICLES_PER_PAGE) {
+                            articleAdapter.setHasMoreItems(false);
+                            if (!isRefresh) {
+                                MaterialToast.showInfo(requireContext(), "No more articles available");
+                            }
+                        }
                     } else {
                         articleAdapter.setHasMoreItems(false);
                         if (isRefresh) {
                             showError("No articles found. Please try again later.");
                         } else {
-                            MaterialToast.showInfo(requireContext(), "No more articles to load");
+                            MaterialToast.showInfo(requireContext(), "No more articles available");
                         }
                     }
                 } else {
@@ -317,25 +348,16 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
         newsApiService = retrofit.create(NewsApiService.class);
     }
 
-    private void openArticleInBrowser(String url) {
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
-    }
-
     @Override
     public void onArticleClick(Article article) {
-        openArticleInBrowser(article.getUrl());
-    }
-
-    @Override
-    public void onLikeClick(Article article, int position) {
-        handleArticleLike(article, position);
+        if (article.getUrl() != null && !article.getUrl().isEmpty()) {
+            openArticleInBrowser(article.getUrl());
+        }
     }
 
     @Override
     public void onLoadMore() {
-        if (!isLoading) {
+        if (!isLoading && articleAdapter.getHasMoreItems()) {
             loadContent(false);
         }
     }
@@ -349,7 +371,12 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
             .putInt("article_" + article.getUrl(), newLikes)
             .apply();
 
-        // Update UI
-        articleAdapter.updateLikes(position, newLikes);
+        
+    }
+
+    private void openArticleInBrowser(String url) {
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
     }
 } 

@@ -20,14 +20,14 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.button.MaterialButton;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.android.material.button.MaterialButton;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder> {
     
-    private List<Article> articles = new ArrayList<>();
+    private final List<Article> articles;
     private boolean hasMoreItems = true;
     private final Context context;
     private final OnArticleClickListener listener;
@@ -36,13 +36,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
 
     public interface OnArticleClickListener {
         void onArticleClick(Article article);
-        void onLikeClick(Article article, int position);
         void onLoadMore();
     }
 
     public ArticleAdapter(Context context, OnArticleClickListener listener) {
         this.context = context;
         this.listener = listener;
+        this.articles = new ArrayList<>();
     }
 
     @NonNull
@@ -57,16 +57,22 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         Article article = articles.get(position);
         
         holder.tvTitle.setText(article.getTitle());
-        holder.tvLikes.setText(String.format("%d votes", article.getLikes()));
+        if (article.getDescription() != null) {
+            holder.tvDescription.setText(article.getDescription());
+            holder.tvDescription.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvDescription.setVisibility(View.GONE);
+        }
         
         // Load image with shimmer effect
         holder.imageShimmer.setVisibility(View.VISIBLE);
         holder.imageShimmer.startShimmer();
         holder.ivArticleImage.setVisibility(View.INVISIBLE);
         
-        if (article.getUrlToImage() != null && !article.getUrlToImage().isEmpty()) {
+        String imageUrl = article.getUrlToImage();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(context)
-                .load(article.getUrlToImage())
+                .load(imageUrl)
                 .centerCrop()
                 .timeout(15000) // 15 seconds timeout
                 .listener(new RequestListener<Drawable>() {
@@ -82,7 +88,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
                             // Show error message with rate limiting
                             long currentTime = System.currentTimeMillis();
                             if (currentTime - lastToastTime > TOAST_DELAY) {
-                                if (e != null && e.getRootCauses().size() > 0) {
+                                if (e != null && !e.getRootCauses().isEmpty()) {
                                     Throwable rootCause = e.getRootCauses().get(0);
                                     if (rootCause instanceof SocketTimeoutException) {
                                         MaterialToast.showWarning(context, 
@@ -118,12 +124,20 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         }
             
         // Handle click events
-        holder.itemView.setOnClickListener(v -> listener.onArticleClick(article));
-        holder.likeContainer.setOnClickListener(v -> listener.onLikeClick(article, position));
-        holder.btnReadMore.setOnClickListener(v -> listener.onArticleClick(article));
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onArticleClick(article);
+            }
+        });
+        
+        holder.btnReadMore.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onArticleClick(article);
+            }
+        });
         
         // Check if we need to load more items when reaching near the end
-        if (position >= articles.size() - 3) {
+        if (hasMoreItems && position >= getItemCount() - 3 && listener != null) {
             listener.onLoadMore();
         }
     }
@@ -137,8 +151,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         if (isRefresh) {
             articles.clear();
         }
-        articles.addAll(newArticles);
-        notifyDataSetChanged();
+        if (newArticles != null) {
+            articles.addAll(newArticles);
+            notifyDataSetChanged();
+        }
     }
 
     public void clearArticles() {
@@ -146,34 +162,26 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         notifyDataSetChanged();
     }
 
-    public boolean getHasMoreItems() {
-        return hasMoreItems;
-    }
-
     public void setHasMoreItems(boolean hasMore) {
         this.hasMoreItems = hasMore;
     }
 
-    public void updateLikes(int position, int newLikes) {
-        if (position >= 0 && position < articles.size()) {
-            articles.get(position).setLikes(newLikes);
-            notifyItemChanged(position);
-        }
+    public boolean getHasMoreItems() {
+        return hasMoreItems;
     }
 
-    static class ArticleViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvLikes;
-        ImageView ivArticleImage;
-        View likeContainer;
-        ShimmerFrameLayout imageShimmer;
-        MaterialButton btnReadMore;
+    public static class ArticleViewHolder extends RecyclerView.ViewHolder {
+        final TextView tvTitle;
+        final TextView tvDescription;
+        final ImageView ivArticleImage;
+        final ShimmerFrameLayout imageShimmer;
+        final MaterialButton btnReadMore;
 
         ArticleViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvLikes = itemView.findViewById(R.id.tvLikes);
+            tvDescription = itemView.findViewById(R.id.tvDescription);
             ivArticleImage = itemView.findViewById(R.id.ivArticleImage);
-            likeContainer = itemView.findViewById(R.id.likeContainer);
             imageShimmer = itemView.findViewById(R.id.imageShimmer);
             btnReadMore = itemView.findViewById(R.id.tvReadMore);
         }

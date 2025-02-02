@@ -159,12 +159,15 @@
                     android:layout_marginEnd="8dp"
                     android:hint="Enter daily goal (ml)"
                     app:endIconMode="clear_text"
-                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundColor="@android:color/transparent"
                     app:boxBackgroundMode="filled"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
+                    app:hintTextColor="?android:attr/textColorSecondary"
+                    app:boxStrokeColor="?android:attr/textColorSecondary"
+                    app:endIconTint="?android:attr/textColorSecondary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/btnUpdateGoal"
                     app:layout_constraintTop_toBottomOf="@id/tvDailyGoalTitle">
@@ -174,7 +177,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:maxLength="5" />
+                        android:maxLength="5"
+                        android:background="@android:color/transparent"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColorHint="?android:attr/textColorSecondary" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -241,43 +247,39 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip150ml"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        style="@style/Widget.App.Chip.Choice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="4dp"
-                        android:text="150ml"
-                        android:textAlignment="center" />
+                        android:text="150ml" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip250ml"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        style="@style/Widget.App.Chip.Choice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginHorizontal="4dp"
-                        android:text="250ml"
-                        android:textAlignment="center" />
+                        android:text="250ml" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip500ml"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        style="@style/Widget.App.Chip.Choice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginHorizontal="4dp"
-                        android:text="500ml"
-                        android:textAlignment="center" />
+                        android:text="500ml" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipCustom"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.Custom"
+                        style="@style/Widget.App.Chip.Choice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="4dp"
-                        android:text="Custom"
-                        android:textAlignment="center" />
+                        android:text="Custom" />
 
                 </LinearLayout>
 
@@ -289,18 +291,16 @@
                     android:layout_marginTop="16dp"
                     android:hint="Enter amount (ml)"
                     android:visibility="gone"
-                    android:textColorHint="@color/benitoite_medium"
                     app:endIconMode="clear_text"
-                    app:endIconTint="@color/benitoite_dark"
-                    app:boxBackgroundColor="@color/white"
+                    app:boxBackgroundColor="@android:color/transparent"
                     app:boxBackgroundMode="filled"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="@color/benitoite_dark"
-                    app:boxStrokeWidth="1dp"
-                    app:hintTextColor="@color/benitoite_dark"
+                    app:boxStrokeColor="?android:attr/textColorSecondary"
+                    app:hintTextColor="?android:attr/textColorSecondary"
+                    app:endIconTint="?android:attr/textColorSecondary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chipContainer">
@@ -310,7 +310,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:textColor="@color/benitoite_darkest"
+                        android:background="@android:color/transparent"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColorHint="?android:attr/textColorSecondary"
                         android:textCursorDrawable="@null" />
                 </com.google.android.material.textfield.TextInputLayout>
 

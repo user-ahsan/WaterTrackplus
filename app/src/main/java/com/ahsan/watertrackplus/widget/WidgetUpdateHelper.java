@@ -16,25 +16,25 @@ public class WidgetUpdateHelper {
         
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         
-        // Update original widget
-        int[] waterTrackWidgetIds = appWidgetManager.getAppWidgetIds(
-            new ComponentName(context, WaterTrackWidgetProvider.class)
-        );
-        if (waterTrackWidgetIds != null && waterTrackWidgetIds.length > 0) {
-            Intent updateIntent = new Intent(context, WaterTrackWidgetProvider.class)
-                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, waterTrackWidgetIds);
+        // Update water droplet widget
+        ComponentName waterDropletWidget = new ComponentName(context, WaterDropletWidgetProvider.class);
+        int[] waterDropletWidgetIds = appWidgetManager.getAppWidgetIds(waterDropletWidget);
+        if (waterDropletWidgetIds != null && waterDropletWidgetIds.length > 0) {
+            appWidgetManager.notifyAppWidgetViewDataChanged(waterDropletWidgetIds, android.R.id.list);
+            Intent updateIntent = new Intent(context, WaterDropletWidgetProvider.class);
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, waterDropletWidgetIds);
             context.sendBroadcast(updateIntent);
         }
-
-        // Update droplet widget
-        int[] dropletWidgetIds = appWidgetManager.getAppWidgetIds(
-            new ComponentName(context, WaterDropletWidgetProvider.class)
-        );
-        if (dropletWidgetIds != null && dropletWidgetIds.length > 0) {
-            Intent updateIntent = new Intent(context, WaterDropletWidgetProvider.class)
-                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, dropletWidgetIds);
+        
+        // Update water track widget
+        ComponentName waterTrackWidget = new ComponentName(context, WaterTrackWidgetProvider.class);
+        int[] waterTrackWidgetIds = appWidgetManager.getAppWidgetIds(waterTrackWidget);
+        if (waterTrackWidgetIds != null && waterTrackWidgetIds.length > 0) {
+            appWidgetManager.notifyAppWidgetViewDataChanged(waterTrackWidgetIds, android.R.id.list);
+            Intent updateIntent = new Intent(context, WaterTrackWidgetProvider.class);
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, waterTrackWidgetIds);
             context.sendBroadcast(updateIntent);
         }
 

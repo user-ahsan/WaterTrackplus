@@ -24,5 +24,11 @@
     <string name="widget_accessibility_remaining">%.1f liters remaining to reach your daily goal</string>
     <string name="widget_accessibility_quick_add">Quick add water button</string>
 
-    <string name="water_droplet_widget_description">Water intake progress shown as an animated water droplet</string>
+    <!-- Widget Labels -->
+    <string name="water_droplet_widget_label">Water Droplet</string>
+    <string name="water_track_widget_label">Water Tracker</string>
+
+    <!-- Widget Descriptions -->
+    <string name="water_droplet_widget_description">Quick water intake tracking with a single tap</string>
+    <string name="water_track_widget_description">Track your daily water intake with detailed progress</string>
 </resources>

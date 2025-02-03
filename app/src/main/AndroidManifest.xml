@@ -45,26 +45,46 @@
         <!-- Widget Provider -->
         <receiver
             android:name=".widget.WaterTrackWidgetProvider"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/water_track_widget_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_OPTIONS_CHANGED"/>
                 <action android:name="QUICK_ADD_WATER" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/water_track_widget_info" />
         </receiver>
 
-        <receiver android:name=".widget.WaterDropletWidgetProvider"
-            android:exported="true">
+        <receiver
+            android:name=".widget.WaterDropletWidgetProvider"
+            android:exported="true"
+            android:label="@string/water_droplet_widget_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED"/>
+                <action android:name="android.appwidget.action.APPWIDGET_OPTIONS_CHANGED"/>
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/water_droplet_widget_info" />
         </receiver>
+
+        <!-- Widget Configuration Activity -->
+        <activity
+            android:name=".widget.WaterTrackWidgetConfigureActivity"
+            android:exported="true"
+            android:theme="@style/Theme.WaterTrack.Dialog">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
 
         <!-- WorkManager Service -->
         <provider

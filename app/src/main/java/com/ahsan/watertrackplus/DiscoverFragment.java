@@ -193,6 +193,8 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
     }
 
     private void loadContent(boolean isRefresh) {
+        if (getContext() == null) return;  // Add early return if context is null
+
         if (!isNetworkAvailable()) {
             swipeRefresh.setRefreshing(false);
             loadMoreProgress.setVisibility(View.GONE);
@@ -201,130 +203,138 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
             return;
         }
 
-        if (isRefresh) {
-            shimmerLayout.setVisibility(View.VISIBLE);
-            shimmerLayout.startShimmer();
-            rvArticles.setVisibility(View.GONE);
-            errorView.setVisibility(View.GONE);
-        } else {
-            loadMoreProgress.setVisibility(View.VISIBLE);
-        }
-
-        isLoading = true;
-        long startTime = System.currentTimeMillis();
-
-        // Create OkHttpClient with logging and timeouts
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new HttpLoggingInterceptor()
-                        .setLevel(HttpLoggingInterceptor.Level.BODY))
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
-
-        // Create Retrofit instance
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        // Create service
-        NewsApiService service = retrofit.create(NewsApiService.class);
-
-        // Make API call
-        service.getArticles(
-                currentCategory,
-                NEWS_API_KEY,
-                ARTICLES_PER_PAGE,
-                currentPage,
-                "publishedAt",
-                "en"
-        ).enqueue(new Callback<NewsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<NewsResponse> call, @NonNull Response<NewsResponse> response) {
-                if (getContext() == null) return;
-
-                isLoading = false;
-                swipeRefresh.setRefreshing(false);
-                shimmerLayout.stopShimmer();
-                shimmerLayout.setVisibility(View.GONE);
-                loadMoreProgress.setVisibility(View.GONE);
-
-                // Check loading time
-                long loadTime = System.currentTimeMillis() - startTime;
-                if (loadTime > 5000) {
-                    MaterialToast.showWarning(requireContext(), 
-                        "Slow internet connection detected. Some images may take longer to load.");
-                }
-
-                if (response.isSuccessful() && response.body() != null && response.body().getArticles() != null) {
-                    List<Article> articles = response.body().getArticles();
-                    if (!articles.isEmpty()) {
-                        rvArticles.setVisibility(View.VISIBLE);
-                        errorView.setVisibility(View.GONE);
-                        articleAdapter.setArticles(articles, isRefresh);
-                        currentPage++;
-                        
-                        // Check if this is the last page (less articles than requested)
-                        if (articles.size() < ARTICLES_PER_PAGE) {
-                            articleAdapter.setHasMoreItems(false);
-                            if (!isRefresh) {
-                                MaterialToast.showInfo(requireContext(), "No more articles available");
-                            }
-                        }
-                    } else {
-                        articleAdapter.setHasMoreItems(false);
-                        if (isRefresh) {
-                            showError("No articles found. Please try again later.");
-                        } else {
-                            MaterialToast.showInfo(requireContext(), "No more articles available");
-                        }
-                    }
-                } else {
-                    if (isRefresh) {
-                        showError("Failed to load articles. Please check your connection and try again.");
-                    } else {
-                        MaterialToast.showError(requireContext(), "Failed to load more articles");
-                    }
-                    articleAdapter.setHasMoreItems(false);
-                }
+        try {
+            if (isRefresh) {
+                shimmerLayout.setVisibility(View.VISIBLE);
+                shimmerLayout.startShimmer();
+                rvArticles.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
+            } else {
+                loadMoreProgress.setVisibility(View.VISIBLE);
             }
 
-            @Override
-            public void onFailure(@NonNull Call<NewsResponse> call, @NonNull Throwable t) {
-                if (getContext() == null) return;
+            isLoading = true;
 
-                isLoading = false;
-                swipeRefresh.setRefreshing(false);
-                shimmerLayout.stopShimmer();
-                shimmerLayout.setVisibility(View.GONE);
-                loadMoreProgress.setVisibility(View.GONE);
+            // Create OkHttpClient with logging and timeouts
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new HttpLoggingInterceptor()
+                            .setLevel(BuildConfig.DEBUG ? 
+                                    HttpLoggingInterceptor.Level.BODY : 
+                                    HttpLoggingInterceptor.Level.NONE))
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .build();
 
-                String errorMessage = "Network error: ";
-                if (t instanceof java.net.SocketTimeoutException) {
-                    errorMessage += "Connection timed out. Please check your internet speed.";
-                } else if (t instanceof java.net.UnknownHostException) {
-                    errorMessage += "No internet connection.";
-                } else {
-                    errorMessage += "Please check your connection and try again.";
+            // Create Retrofit instance
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            // Create service
+            NewsApiService service = retrofit.create(NewsApiService.class);
+
+            // Make API call
+            Call<NewsResponse> call = service.getArticles(
+                    currentCategory.equals("All") ? null : currentCategory.toLowerCase(),
+                    NEWS_API_KEY,
+                    ARTICLES_PER_PAGE,
+                    currentPage,
+                    "publishedAt",
+                    "en"
+            );
+
+            call.enqueue(new Callback<NewsResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<NewsResponse> call, @NonNull Response<NewsResponse> response) {
+                    if (getContext() == null) return;
+
+                    try {
+                        isLoading = false;
+                        swipeRefresh.setRefreshing(false);
+                        shimmerLayout.stopShimmer();
+                        shimmerLayout.setVisibility(View.GONE);
+                        loadMoreProgress.setVisibility(View.GONE);
+                        rvArticles.setVisibility(View.VISIBLE);
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Article> articles = response.body().getArticles();
+                            if (articles != null && !articles.isEmpty()) {
+                                articleAdapter.setArticles(articles, currentPage == 1);
+                                errorView.setVisibility(View.GONE);
+                                // Check if we've reached the last page
+                                articleAdapter.setHasMoreItems(articles.size() >= ARTICLES_PER_PAGE);
+                                currentPage++; // Increment page number for next load
+                            } else {
+                                if (currentPage == 1) {
+                                    showError("No articles found for this category");
+                                }
+                                articleAdapter.setHasMoreItems(false);
+                            }
+                        } else {
+                            String errorMsg = "Error loading articles. Please try again.";
+                            try {
+                                if (response.errorBody() != null) {
+                                    errorMsg = response.errorBody().string();
+                                }
+                            } catch (IOException e) {
+                                Log.e("DiscoverFragment", "Error reading error body", e);
+                            }
+                            showError(errorMsg);
+                            MaterialToast.showError(requireContext(), errorMsg);
+                        }
+                    } catch (Exception e) {
+                        Log.e("DiscoverFragment", "Error processing response", e);
+                        showError("An unexpected error occurred. Please try again.");
+                    }
                 }
 
-                if (isRefresh) {
+                @Override
+                public void onFailure(@NonNull Call<NewsResponse> call, @NonNull Throwable t) {
+                    if (getContext() == null) return;
+
+                    isLoading = false;
+                    swipeRefresh.setRefreshing(false);
+                    shimmerLayout.stopShimmer();
+                    shimmerLayout.setVisibility(View.GONE);
+                    loadMoreProgress.setVisibility(View.GONE);
+
+                    String errorMessage = "Network error. Please check your connection and try again.";
+                    if (t instanceof IOException) {
+                        errorMessage = "Network error. Please check your connection.";
+                    } else {
+                        Log.e("DiscoverFragment", "Error loading articles", t);
+                    }
                     showError(errorMessage);
-                } else {
                     MaterialToast.showError(requireContext(), errorMessage);
                 }
-                articleAdapter.setHasMoreItems(false);
+            });
+        } catch (Exception e) {
+            Log.e("DiscoverFragment", "Error in loadContent", e);
+            isLoading = false;
+            swipeRefresh.setRefreshing(false);
+            if (shimmerLayout != null) {
+                shimmerLayout.stopShimmer();
+                shimmerLayout.setVisibility(View.GONE);
             }
-        });
+            if (loadMoreProgress != null) {
+                loadMoreProgress.setVisibility(View.GONE);
+            }
+            showError("An unexpected error occurred. Please try again.");
+        }
     }
 
     private void showError(String message) {
-        rvArticles.setVisibility(View.GONE);
-        errorView.setVisibility(View.VISIBLE);
+        if (getContext() == null || errorView == null) return;
+        
         TextView tvError = errorView.findViewById(R.id.tvError);
-        tvError.setText(message);
+        if (tvError != null) {
+            tvError.setText(message);
+        }
+        errorView.setVisibility(View.VISIBLE);
+        rvArticles.setVisibility(View.GONE);
     }
 
     private void setupRetrofit() {

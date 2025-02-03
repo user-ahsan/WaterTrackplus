@@ -27,6 +27,7 @@ import androidx.work.WorkManager;
 
 import com.ahsan.watertrackplus.R;
 import com.ahsan.watertrackplus.data.WaterDbHelper;
+import com.ahsan.watertrackplus.widget.WidgetUpdateHelper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -155,11 +156,8 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                     .putString("last_update_date", getCurrentDate())
                     .apply();
 
-                // Update all widgets
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                ComponentName widgetComponent = new ComponentName(context, WaterTrackWidgetProvider.class);
-                int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponent);
-                onUpdate(context, appWidgetManager, appWidgetIds);
+                // Update all widgets using helper
+                WidgetUpdateHelper.updateAllWidgets(context);
                 
                 // Show success notification
                 showQuickAddNotification(context, amount);

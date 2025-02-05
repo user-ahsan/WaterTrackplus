@@ -1,30 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
+    android:width="18dp"
+    android:height="18dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    
-    <!-- Main water drop shape -->
-    <path
-        android:fillColor="?attr/colorPrimary"
-        android:pathData="M12,2.5C8,7 4,12 4,16C4,20.5 7.5,24 12,24C16.5,24 20,20.5 20,16C20,12 16,7 12,2.5Z"/>
-    
-    <!-- Highlight for 3D effect -->
-    <path
-        android:fillColor="?attr/colorPrimaryContainer"
-        android:fillAlpha="0.4"
-        android:pathData="M12,2.5C8,7 4,12 4,16C4,16.5 4.1,17 4.2,17.5C5.8,14.5 8.7,12.5 12,12.5C15.3,12.5 18.2,14.5 19.8,17.5C19.9,17 20,16.5 20,16C20,12 16,7 12,2.5Z"/>
-    
-    <!-- Shadow for 3D effect -->
-    <path
-        android:fillColor="?attr/colorPrimaryInverse"
-        android:fillAlpha="0.1"
-        android:pathData="M12,24C16.5,24 20,20.5 20,16C20,15.5 19.9,15 19.8,14.5C18.2,17.5 15.3,19.5 12,19.5C8.7,19.5 5.8,17.5 4.2,14.5C4.1,15 4,15.5 4,16C4,20.5 7.5,24 12,24Z"/>
-    
-    <!-- Inner shine for depth -->
-    <path
-        android:fillColor="?attr/colorPrimaryContainer"
-        android:fillAlpha="0.5"
-        android:pathData="M10,8C8.9,9.5 8,11.2 8,13C8,14.7 9.3,16 11,16C12.7,16 14,14.7 14,13C14,11.2 13.1,9.5 12,8C11.3,8.7 10.7,8.7 10,8Z"/>
-</vector> 
+
+    <!-- Group to center the logo vertically -->
+    <group
+        android:translateY="-1.25">
+        
+        <!-- Shadow base -->
+        <path
+            android:fillColor="#40000000"
+            android:pathData="M14.5,21.5c-3,0.7-5.5,0.2-7.5-1.5c1.5,1 3.5,1.3 6,1c-1-0.5-3.5-2-3.5-5c0-3,2-7,6-11c4,4,6,8,6,11c0,3-2.5,4.5-4.5,5c2.5,0.3 4.5-0.1 6-1c-2,1.7-4.5,2.2-7.5,1.5z"/>
+
+        <!-- Main droplet body with 3D gradient -->
+        <path
+            android:fillColor="?attr/colorPrimary"
+            android:pathData="M12,4.5C8.5,8.5 6,12.5 6,15.5C6,19 8.7,22 12,22C15.3,22 18,19 18,15.5C18,12.5 15.5,8.5 12,4.5Z">
+            <gradient
+                android:startColor="?attr/colorPrimaryDark"
+                android:endColor="?attr/colorPrimary"
+                android:type="linear"
+                android:angle="270"/>
+        </path>
+
+        <!-- Curved side highlight -->
+        <path
+            android:fillColor="#80FFFFFF"
+            android:pathData="M13.5,6.5c2,2.5 4.2,6 4.5,9c-0.5,0.2-2,0.5-4.5,0.5c-2.5,0-4-0.3-4.5-0.5c0.3-3 2.5-6.5 4.5-9c0.5,0 0.5,0 0,0z"/>
+
+        <!-- Dynamic top reflection -->
+        <path
+            android:fillColor="#B0FFFFFF"
+            android:pathData="M12,7c1.5,2 3.2,4.8 3.5,7.5c-0.5,0.2-1.5,0.5-3.5,0.5s-3-0.3-3.5-0.5C8.8,11.8 10.5,9 12,7z">
+            <gradient
+                android:startColor="#DDFFFFFF"
+                android:endColor="#00FFFFFF"
+                android:type="linear"
+                android:angle="135"/>
+        </path>
+
+        <!-- Depth accent line -->
+        <path
+            android:strokeColor="#40FFFFFF"
+            android:strokeWidth="0.5"
+            android:pathData="M12,18.5c2.5,0 4-0.3 4.5-0.5"/>
+    </group>
+</vector>

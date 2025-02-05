@@ -79,7 +79,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(WelcomeActivity.this, CreateProfileActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                
+                // Use the new transition API
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 
+                        R.anim.slide_in_right, R.anim.slide_out_left);
+                } else {
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 finish();
             });
         } catch (Exception e) {

@@ -104,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.navigation_home) {
                 fragment = new HomeFragment();
                 fragmentTag = "HomeFragment";
-            } else if (itemId == R.id.navigation_discover) {
-                fragment = new DiscoverFragment();
-                fragmentTag = "DiscoverFragment";
             } else if (itemId == R.id.navigation_me) {
                 fragment = new MeFragment();
                 fragmentTag = "MeFragment";

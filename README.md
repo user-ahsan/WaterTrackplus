@@ -35,8 +35,7 @@ WaterTrack+ is a modern, feature-rich Android application designed to help users
 ## Requirements
 - Android 8.0 (API level 26) or higher
 - Permissions:
-  - Internet access (for future features)
-  - Notifications
+  - Notifications (for reminders)
   - Camera (optional, for profile pictures)
   - Storage (for profile pictures)
 

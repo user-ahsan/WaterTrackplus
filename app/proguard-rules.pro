@@ -103,12 +103,6 @@
 # Keep all your model classes
 -keep class com.ahsan.watertrackplus.** { *; }
 
-# Keep JSSE classes
--keep class javax.net.ssl.** { *; }
--dontwarn javax.net.ssl.**
--keep class java.security.** { *; }
--dontwarn java.security.**
-
 # Keep XML-related classes
 -keep class org.xmlpull.v1.** { *; }
 -dontwarn org.xmlpull.v1.**
@@ -125,25 +119,6 @@
 
 # Keep models
 -keep class com.ahsan.watertrackplus.models.** { *; }
--keep class com.ahsan.watertrackplus.NewsResponse { *; }
--keep class com.ahsan.watertrackplus.Article { *; }
 
 # Keep adapters
 -keep class com.ahsan.watertrackplus.adapters.** { *; }
--keep class com.ahsan.watertrackplus.adapters.ArticleAdapter { *; }
--keepclassmembers class com.ahsan.watertrackplus.adapters.ArticleAdapter {
-    public void addArticles(java.util.List);
-    public void clearArticles();
-    public void setHasMoreItems(boolean);
-    public int getItemCount();
-    public boolean getHasMoreItems();
-}
-
-# Keep models and responses
--keep class com.ahsan.watertrackplus.models.** { *; }
--keep class com.ahsan.watertrackplus.NewsResponse { *; }
--keep class com.ahsan.watertrackplus.Article { *; }
--keep class com.ahsan.watertrackplus.adapters.ArticleAdapter$* { *; }
-
-# Keep interfaces
--keep interface com.ahsan.watertrackplus.adapters.ArticleAdapter$OnArticleClickListener { *; }

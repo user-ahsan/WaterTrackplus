@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WaterTrack+</string>
+    <string name="title_home">Home</string>
+    <string name="title_me">Me</string>
 
     <!-- Widget Strings -->
     <string name="widget_description">Track your daily water intake</string>
@@ -15,8 +17,8 @@
     <string name="widget_error_retry">Please try again</string>
     
     <!-- Widget Format Strings -->
-    <string name="widget_progress_format">%.1f/%.1f L</string>
-    <string name="widget_remaining_format">%.1f L remaining</string>
+    <string name="widget_progress_format">%.1f/%.1fL</string>
+    <string name="widget_remaining_format">%.1fL to go</string>
     <string name="widget_quick_add_format">Quick Add %.0f ml</string>
     
     <!-- Accessibility Strings -->
@@ -25,10 +27,10 @@
     <string name="widget_accessibility_quick_add">Quick add water button</string>
 
     <!-- Widget Labels -->
-    <string name="water_droplet_widget_label">WaterTrack+ Quick Add Widget</string>
-    <string name="water_track_widget_label">WaterTrack+ Detailed Widget</string>
+    <string name="water_droplet_widget_label">Water Droplet Widget</string>
+    <string name="water_track_widget_label">Water Track Widget</string>
 
     <!-- Widget Descriptions -->
     <string name="water_droplet_widget_description">Quick add water intake with a single tap</string>
-    <string name="water_track_widget_description">Track your daily water intake with detailed statistics</string>
+    <string name="water_track_widget_description">Track your daily water intake with a detailed widget</string>
 </resources>

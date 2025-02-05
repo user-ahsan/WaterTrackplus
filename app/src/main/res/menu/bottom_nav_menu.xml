@@ -4,18 +4,12 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
-        android:title="Home"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/navigation_discover"
-        android:icon="@drawable/ic_discover"
-        android:title="Discover"
+        android:title="@string/title_home"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_me"
         android:icon="@drawable/ic_person"
-        android:title="Me"
+        android:title="@string/title_me"
         app:showAsAction="ifRoom" />
 </menu> 

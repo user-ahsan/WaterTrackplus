@@ -168,15 +168,17 @@ public class HomeFragment extends BaseFragment {
 
         // Handle chip suggestions
         chipGroupSuggestions.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.chip400) {
-                etAmount.setText("400");
-                clearInputFocus(etAmount);
-            } else if (checkedId == R.id.chip750) {
-                etAmount.setText("750");
-                clearInputFocus(etAmount);
-            } else if (checkedId == R.id.chip1000) {
-                etAmount.setText("1000");
-                clearInputFocus(etAmount);
+            if (checkedId != -1) {
+                if (checkedId == R.id.chip400) {
+                    etAmount.setText("400");
+                    clearInputFocus(etAmount);
+                } else if (checkedId == R.id.chip750) {
+                    etAmount.setText("750");
+                    clearInputFocus(etAmount);
+                } else if (checkedId == R.id.chip1000) {
+                    etAmount.setText("1000");
+                    clearInputFocus(etAmount);
+                }
             }
         });
 

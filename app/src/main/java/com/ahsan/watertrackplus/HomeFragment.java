@@ -31,6 +31,14 @@ import com.ahsan.watertrackplus.widget.WidgetUpdateHelper;
 
 public class HomeFragment extends BaseFragment {
     
+    private static final String TAG = "HomeFragment";
+    private static final String WIDGET_PREFS_NAME = "widget_preferences";
+    private static final String KEY_DAILY_GOAL = "daily_goal";
+    private static final String KEY_CURRENT_INTAKE = "current_intake";
+    private static final String KEY_LAST_UPDATE_DATE = "last_update_date";
+    private static final float DEFAULT_DAILY_GOAL = 2500f; // ml
+
+    private View rootView;
     private TextView tvHealthScore;
     private TextView tvWaterIntakeStatus;
     private CircularProgressIndicator circularProgress;
@@ -39,11 +47,7 @@ public class HomeFragment extends BaseFragment {
     private ChipGroup chipGroup;
     private Dialog customDialog;
     private WaterDbHelper dbHelper;
-    private SharedPreferences sharedPreferences;
-    private static final String PREFS_NAME = "WaterTrackPrefs";
-    private static final String PREF_DAILY_GOAL = "daily_goal";
-    private static final String PREF_LAST_UPDATE_DATE = "last_update_date";
-    private static final float DEFAULT_DAILY_GOAL = 2500f; // ml
+    private SharedPreferences widgetPrefs;
 
     @Nullable
     @Override
@@ -59,8 +63,8 @@ public class HomeFragment extends BaseFragment {
         // Initialize database helper
         dbHelper = new WaterDbHelper(requireContext());
         
-        // Initialize SharedPreferences
-        sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        // Initialize widget preferences
+        widgetPrefs = requireContext().getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
         
         // Initialize views
         tvHealthScore = view.findViewById(R.id.tvHealthScore);
@@ -92,7 +96,7 @@ public class HomeFragment extends BaseFragment {
 
     private void handleAmountSelection(int amount) {
         // Get daily goal and current intake
-        float dailyGoal = sharedPreferences.getFloat(PREF_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+        float dailyGoal = widgetPrefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
         float currentIntake = dbHelper.getTodayTotalIntake();
         
         // Calculate remaining amount to reach goal
@@ -190,7 +194,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void setupDailyGoal() {
-        float currentGoal = sharedPreferences.getFloat(PREF_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+        float currentGoal = widgetPrefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
         etDailyGoal.setText(String.valueOf((int)currentGoal));
 
         // Clear focus when done editing
@@ -217,7 +221,7 @@ public class HomeFragment extends BaseFragment {
         if (!goalStr.isEmpty()) {
             try {
                 float newGoal = Float.parseFloat(goalStr);
-                float oldGoal = sharedPreferences.getFloat(PREF_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+                float oldGoal = widgetPrefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
                 
                 if (newGoal >= 500 && newGoal <= 5000) {
                     float currentIntake = dbHelper.getTodayTotalIntake();
@@ -286,18 +290,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void updateGoalAndWidget(float newGoal, boolean keepRecords) {
-        // Update goal in preferences
-        sharedPreferences.edit()
-            .putFloat(PREF_DAILY_GOAL, newGoal)
-            .apply();
-
-        // Update widget preferences
-        SharedPreferences widgetPrefs = requireContext().getSharedPreferences(
-            WaterTrackWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE);
-        
         widgetPrefs.edit()
-            .putFloat("daily_goal", newGoal)
-            .putFloat("current_intake", keepRecords ? dbHelper.getTodayTotalIntake() : 0)
+            .putFloat(KEY_DAILY_GOAL, newGoal)
+            .putFloat(KEY_CURRENT_INTAKE, keepRecords ? dbHelper.getTodayTotalIntake() : 0)
+            .putString(KEY_LAST_UPDATE_DATE, new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                .format(new java.util.Date()))
             .apply();
 
         // Update UI
@@ -305,19 +302,19 @@ public class HomeFragment extends BaseFragment {
         clearInputFocus(etDailyGoal);
 
         // Update widget
-        updateWidget();
+        WidgetUpdateHelper.updateAllWidgets(requireContext());
     }
 
     private void checkDateChange() {
         String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd")
             .format(new java.util.Date());
-        String lastUpdateDate = sharedPreferences.getString(PREF_LAST_UPDATE_DATE, "");
+        String lastUpdateDate = widgetPrefs.getString(KEY_LAST_UPDATE_DATE, "");
         
         if (!currentDate.equals(lastUpdateDate)) {
             // Reset widget progress for new day
             updateWidget();
-            sharedPreferences.edit()
-                .putString(PREF_LAST_UPDATE_DATE, currentDate)
+            widgetPrefs.edit()
+                .putString(KEY_LAST_UPDATE_DATE, currentDate)
                 .apply();
         }
     }
@@ -328,7 +325,7 @@ public class HomeFragment extends BaseFragment {
 
     private void updateProgress() {
         // Get daily goal from preferences
-        float dailyGoal = sharedPreferences.getFloat(PREF_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+        float dailyGoal = widgetPrefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
         
         // Get today's total intake
         float totalIntake = dbHelper.getTodayTotalIntake();
@@ -344,12 +341,10 @@ public class HomeFragment extends BaseFragment {
         );
         
         // Save current intake and date to widget preferences
-        SharedPreferences widgetPrefs = requireContext().getSharedPreferences(
-            WaterTrackWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE);
         widgetPrefs.edit()
-            .putFloat("current_intake", totalIntake)
-            .putFloat("daily_goal", dailyGoal)
-            .putString("last_update_date", new java.text.SimpleDateFormat("yyyy-MM-dd")
+            .putFloat(KEY_CURRENT_INTAKE, totalIntake)
+            .putFloat(KEY_DAILY_GOAL, dailyGoal)
+            .putString(KEY_LAST_UPDATE_DATE, new java.text.SimpleDateFormat("yyyy-MM-dd")
                 .format(new java.util.Date()))
             .apply();
         

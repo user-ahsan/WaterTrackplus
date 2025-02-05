@@ -1,78 +1,52 @@
 package com.ahsan.watertrackplus;
 
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.facebook.shimmer.ShimmerFrameLayout;
+
 import com.ahsan.watertrackplus.adapters.ArticleAdapter;
+import com.ahsan.watertrackplus.base.BaseFragment;
 import com.ahsan.watertrackplus.models.Article;
-import com.ahsan.watertrackplus.utils.MaterialToast;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import android.content.Context;
-import java.util.List;
-import java.io.IOException;
-import android.util.Log;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import java.util.concurrent.TimeUnit;
-import android.widget.TextView;
-import java.util.Random;
-import java.util.Calendar;
-import android.widget.ProgressBar;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArticleClickListener {
+import java.util.ArrayList;
+import java.util.List;
 
-    private static final String NEWS_API_KEY = "5209e61af2f44af0802acf72d17caaea";
-    private static final String BASE_URL = "https://newsapi.org/v2/";
-    private static final int ARTICLES_PER_PAGE = 15;
-    private int currentPage = 1;
-    private boolean isLoading = false;
-    private SwipeRefreshLayout swipeRefresh;
-    private RecyclerView rvArticles;
-    private ArticleAdapter articleAdapter;
-    private View errorView;
-    private ShimmerFrameLayout shimmerLayout;
-    private ProgressBar loadMoreProgress;
-    private NewsApiService newsApiService;
-    private SharedPreferences sharedPreferences;
+public class DiscoverFragment extends BaseFragment {
     private View rootView;
+    private RecyclerView rvArticles;
+    private SwipeRefreshLayout swipeRefresh;
+    private ArticleAdapter articleAdapter;
+    private ShimmerFrameLayout shimmerLayout;
+    private LinearLayout errorView;
+    private TextView tvError;
+    private ProgressBar loadMoreProgress;
     private ChipGroup chipGroupCategories;
-    private String currentCategory = "All";
+    private String currentCategory = "all";
+    private boolean isLoading = false;
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, 
+                           @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_discover, container, false);
-        
-        swipeRefresh = rootView.findViewById(R.id.swipeRefresh);
-        rvArticles = rootView.findViewById(R.id.rvArticles);
-        errorView = rootView.findViewById(R.id.errorView);
-        shimmerLayout = rootView.findViewById(R.id.shimmerLayout);
-        loadMoreProgress = rootView.findViewById(R.id.loadMoreProgress);
-        chipGroupCategories = rootView.findViewById(R.id.chipGroupCategories);
-
-        setupRecyclerView();
-        setupSwipeRefresh();
-        setupChipGroup();
-        loadContent(true);
-        
         return rootView;
     }
 
@@ -80,91 +54,56 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        // Initialize SharedPreferences
-        sharedPreferences = requireContext().getSharedPreferences("article_likes", Context.MODE_PRIVATE);
-
-        // Initialize Retrofit
-        setupRetrofit();
+        initViews(view);
+        setupRecyclerView();
+        setupSwipeRefresh();
+        setupChipGroup();
+        loadArticles(true);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    return true;
-                }
-                // Check for slow connection
-                if (capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                    !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)) {
-                    MaterialToast.showWarning(requireContext(), 
-                        "You're on a metered connection. Images may load slowly.");
-                }
-            }
-        }
-        return false;
+    private void initViews(View view) {
+        rvArticles = view.findViewById(R.id.rvArticles);
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        shimmerLayout = view.findViewById(R.id.shimmerLayout);
+        errorView = view.findViewById(R.id.errorView);
+        tvError = view.findViewById(R.id.tvError);
+        loadMoreProgress = view.findViewById(R.id.loadMoreProgress);
+        chipGroupCategories = view.findViewById(R.id.chipGroupCategories);
     }
 
     private void setupRecyclerView() {
+        articleAdapter = new ArticleAdapter(requireContext(), new ArticleAdapter.OnArticleClickListener() {
+            @Override
+            public void onArticleClick(Article article) {
+                // Handle article click
+                // TODO: Implement article detail view
+            }
+
+            @Override
+            public void onLoadMore() {
+                loadMoreArticles();
+            }
+        });
+        
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         rvArticles.setLayoutManager(layoutManager);
-        articleAdapter = new ArticleAdapter(requireContext(), this);
         rvArticles.setAdapter(articleAdapter);
         
-        // Add scroll listener for infinite scrolling and pull-up refresh
+        // Add scroll listener for pagination
         rvArticles.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean isLoadingMore = false;
-            private int previousTotal = 0;
-            private static final int VISIBLE_THRESHOLD = 5;
-
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 
+                if (!isLoading) {
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
-                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-                // Reset loading state if total items changed
-                if (totalItemCount > previousTotal) {
-                    isLoadingMore = false;
-                    previousTotal = totalItemCount;
-                }
-
-                // Load more when reaching near the end
-                if (!isLoadingMore && !isLoading && 
-                    (totalItemCount - lastVisibleItem) <= VISIBLE_THRESHOLD) {
-                    onLoadMore();
-                    isLoadingMore = true;
-                }
-
-                // Pull-up refresh when at the bottom
-                if (!isLoading && dy < 0 && lastVisibleItem == totalItemCount - 1) {
-                    if (articleAdapter.getHasMoreItems()) {
-                        loadMoreProgress.setVisibility(View.VISIBLE);
-                        currentPage = 1;
-                        articleAdapter.clearArticles();
-                        articleAdapter.setHasMoreItems(true);
-                        loadContent(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                
-                // Show appropriate message when at bottom
-                if (!isLoading && newState == RecyclerView.SCROLL_STATE_IDLE &&
-                    layoutManager.findLastCompletelyVisibleItemPosition() == articleAdapter.getItemCount() - 1) {
-                    if (articleAdapter.getHasMoreItems()) {
-                        MaterialToast.showInfo(requireContext(), "Pull up to refresh");
-                    } else {
-                        MaterialToast.showInfo(requireContext(), "No more articles available");
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0
+                            && totalItemCount >= PAGE_SIZE) {
+                        loadMoreArticles();
                     }
                 }
             }
@@ -172,221 +111,101 @@ public class DiscoverFragment extends Fragment implements ArticleAdapter.OnArtic
     }
 
     private void setupSwipeRefresh() {
-        swipeRefresh.setColorSchemeResources(R.color.benitoite_dark);
         swipeRefresh.setOnRefreshListener(() -> {
-            // Reset everything for fresh load
             currentPage = 1;
-            articleAdapter.clearArticles();
-            articleAdapter.setHasMoreItems(true);
-            loadContent(true);
+            loadArticles(false);
         });
     }
 
     private void setupChipGroup() {
-        chipGroupCategories.setOnCheckedChangeListener((group, checkedId) -> {
-            Chip chip = group.findViewById(checkedId);
-            if (chip != null) {
-                currentCategory = chip.getText().toString();
-                loadContent(true);
-            }
-        });
+        if (chipGroupCategories != null) {
+            chipGroupCategories.setOnCheckedChangeListener((group, checkedId) -> {
+                Chip chip = group.findViewById(checkedId);
+                if (chip != null) {
+                    currentCategory = chip.getText().toString().toLowerCase();
+                    currentPage = 1;
+                    loadArticles(true);
+                }
+            });
+        }
     }
 
-    private void loadContent(boolean isRefresh) {
-        if (getContext() == null) return;  // Add early return if context is null
+    private void loadArticles(boolean showShimmer) {
+        if (!isAdded()) return;
 
-        if (!isNetworkAvailable()) {
-            swipeRefresh.setRefreshing(false);
-            loadMoreProgress.setVisibility(View.GONE);
-            showError("No internet connection. Please check your network and try again.");
-            MaterialToast.showError(requireContext(), "No internet connection");
-            return;
-        }
-
-        try {
-            if (isRefresh) {
+        if (showShimmer) {
                 shimmerLayout.setVisibility(View.VISIBLE);
                 shimmerLayout.startShimmer();
-                rvArticles.setVisibility(View.GONE);
-                errorView.setVisibility(View.GONE);
-            } else {
-                loadMoreProgress.setVisibility(View.VISIBLE);
             }
 
             isLoading = true;
+        errorView.setVisibility(View.GONE);
+        
+        // Simulate network call
+        handler.postDelayed(() -> {
+            if (!isAdded()) return;
+            List<Article> articles = generateDummyArticles();
+            updateUI(articles, true);
+        }, 1500);
+    }
 
-            // Create OkHttpClient with logging and timeouts
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(new HttpLoggingInterceptor()
-                            .setLevel(BuildConfig.DEBUG ? 
-                                    HttpLoggingInterceptor.Level.BODY : 
-                                    HttpLoggingInterceptor.Level.NONE))
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
-                    .build();
+    private void loadMoreArticles() {
+        if (!isAdded() || isLoading) return;
+        
+        isLoading = true;
+        loadMoreProgress.setVisibility(View.VISIBLE);
+        
+        // Simulate network call
+        handler.postDelayed(() -> {
+            if (!isAdded()) return;
+            List<Article> moreArticles = generateDummyArticles();
+            updateUI(moreArticles, false);
+        }, 1500);
+    }
 
-            // Create Retrofit instance
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+    private void updateUI(List<Article> articles, boolean isFirstPage) {
+        if (!isAdded()) return;
 
-            // Create service
-            NewsApiService service = retrofit.create(NewsApiService.class);
-
-            // Make API call
-            Call<NewsResponse> call = service.getArticles(
-                    currentCategory.equals("All") ? null : currentCategory.toLowerCase(),
-                    NEWS_API_KEY,
-                    ARTICLES_PER_PAGE,
-                    currentPage,
-                    "publishedAt",
-                    "en"
-            );
-
-            call.enqueue(new Callback<NewsResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<NewsResponse> call, @NonNull Response<NewsResponse> response) {
-                    if (getContext() == null) return;
-
-                    try {
-                        isLoading = false;
-                        swipeRefresh.setRefreshing(false);
-                        shimmerLayout.stopShimmer();
-                        shimmerLayout.setVisibility(View.GONE);
-                        loadMoreProgress.setVisibility(View.GONE);
-                        rvArticles.setVisibility(View.VISIBLE);
-
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<Article> articles = response.body().getArticles();
-                            if (articles != null && !articles.isEmpty()) {
-                                articleAdapter.setArticles(articles, currentPage == 1);
-                                errorView.setVisibility(View.GONE);
-                                // Check if we've reached the last page
-                                articleAdapter.setHasMoreItems(articles.size() >= ARTICLES_PER_PAGE);
-                                currentPage++; // Increment page number for next load
-                            } else {
-                                if (currentPage == 1) {
-                                    showError("No articles found for this category");
-                                }
-                                articleAdapter.setHasMoreItems(false);
-                            }
-                        } else {
-                            String errorMsg = "Error loading articles. Please try again.";
-                            try {
-                                if (response.errorBody() != null) {
-                                    errorMsg = response.errorBody().string();
-                                }
-                            } catch (IOException e) {
-                                Log.e("DiscoverFragment", "Error reading error body", e);
-                            }
-                            showError(errorMsg);
-                            MaterialToast.showError(requireContext(), errorMsg);
-                        }
-                    } catch (Exception e) {
-                        Log.e("DiscoverFragment", "Error processing response", e);
-                        showError("An unexpected error occurred. Please try again.");
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<NewsResponse> call, @NonNull Throwable t) {
-                    if (getContext() == null) return;
-
-                    isLoading = false;
-                    swipeRefresh.setRefreshing(false);
+        if (isFirstPage) {
+            articleAdapter.setArticles(articles, true);
                     shimmerLayout.stopShimmer();
                     shimmerLayout.setVisibility(View.GONE);
-                    loadMoreProgress.setVisibility(View.GONE);
-
-                    String errorMessage = "Network error. Please check your connection and try again.";
-                    if (t instanceof IOException) {
-                        errorMessage = "Network error. Please check your connection.";
                     } else {
-                        Log.e("DiscoverFragment", "Error loading articles", t);
-                    }
-                    showError(errorMessage);
-                    MaterialToast.showError(requireContext(), errorMessage);
-                }
-            });
-        } catch (Exception e) {
-            Log.e("DiscoverFragment", "Error in loadContent", e);
-            isLoading = false;
-            swipeRefresh.setRefreshing(false);
-            if (shimmerLayout != null) {
-                shimmerLayout.stopShimmer();
-                shimmerLayout.setVisibility(View.GONE);
-            }
-            if (loadMoreProgress != null) {
+            articleAdapter.setArticles(articles, false);
                 loadMoreProgress.setVisibility(View.GONE);
-            }
-            showError("An unexpected error occurred. Please try again.");
         }
+        
+        swipeRefresh.setRefreshing(false);
+        isLoading = false;
+        currentPage++;
     }
 
-    private void showError(String message) {
-        if (getContext() == null || errorView == null) return;
-        
-        TextView tvError = errorView.findViewById(R.id.tvError);
-        if (tvError != null) {
-            tvError.setText(message);
+    private List<Article> generateDummyArticles() {
+        List<Article> articles = new ArrayList<>();
+        for (int i = 0; i < PAGE_SIZE; i++) {
+            String title = "Stay Hydrated: The Importance of Water";
+            String description = "Learn why staying hydrated is crucial for your health and how much water you should drink daily.";
+            String url = "https://example.com/article" + i;
+            String imageUrl = "https://example.com/image.jpg";
+            
+            Article article = new Article(
+                title,
+                description,
+                url,
+                imageUrl,
+                currentCategory
+            );
+            articles.add(article);
         }
-        errorView.setVisibility(View.VISIBLE);
-        rvArticles.setVisibility(View.GONE);
-    }
-
-    private void setupRetrofit() {
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
-        
-        // Add logging interceptor for debugging
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        clientBuilder.addInterceptor(logging);
-
-        // Add timeout
-        clientBuilder.connectTimeout(30, TimeUnit.SECONDS);
-        clientBuilder.readTimeout(30, TimeUnit.SECONDS);
-
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(clientBuilder.build())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-        newsApiService = retrofit.create(NewsApiService.class);
+        return articles;
     }
 
     @Override
-    public void onArticleClick(Article article) {
-        if (article.getUrl() != null && !article.getUrl().isEmpty()) {
-            openArticleInBrowser(article.getUrl());
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (shimmerLayout != null) {
+            shimmerLayout.stopShimmer();
         }
-    }
-
-    @Override
-    public void onLoadMore() {
-        if (!isLoading && articleAdapter.getHasMoreItems()) {
-            loadContent(false);
-        }
-    }
-
-    private void handleArticleLike(Article article, int position) {
-        int currentLikes = article.getLikes();
-        int newLikes = currentLikes + 1;
-        
-        // Save likes to SharedPreferences
-        sharedPreferences.edit()
-            .putInt("article_" + article.getUrl(), newLikes)
-            .apply();
-
-        
-    }
-
-    private void openArticleInBrowser(String url) {
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
+        handler.removeCallbacksAndMessages(null);
     }
 } 

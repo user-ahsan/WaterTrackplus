@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.WaterTrack" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.WaterTrack" parent="Theme.Material3.Light.NoActionBar">
         <!-- Status bar and Navigation -->
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/white</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
         
         <!-- Colors -->
         <item name="colorPrimary">@color/benitoite_dark</item>
@@ -27,9 +27,10 @@
 
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
-    </style>
 
-    <style name="Theme.WaterTrack" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Prevent flickering during theme changes -->
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowContentTransitions">false</item>
     </style>
 
     <!-- Card Style -->
@@ -74,7 +75,7 @@
     </style>
 
     <!-- Dialog theme for widget configuration -->
-    <style name="Theme.WaterTrack.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog">
+    <style name="Theme.WaterTrack.Dialog" parent="Theme.Material3.Light.Dialog">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowMinWidthMajor">90%</item>

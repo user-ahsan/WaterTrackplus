@@ -125,4 +125,19 @@ public class WaterDbHelper extends SQLiteOpenHelper {
         db.delete(TABLE_WATER_INTAKE, null, null);
         Log.d(TAG, "All records cleared");
     }
+
+    // Check if there are any water intake records
+    public boolean hasAnyWaterIntakeRecords() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM " + TABLE_WATER_INTAKE;
+        Cursor cursor = db.rawQuery(query, null);
+        
+        boolean hasRecords = false;
+        if (cursor.moveToFirst()) {
+            hasRecords = cursor.getInt(0) > 0;
+        }
+        cursor.close();
+        
+        return hasRecords;
+    }
 } 

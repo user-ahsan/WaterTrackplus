@@ -36,8 +36,8 @@ public class NotificationWorker extends Worker {
             String message = getNotificationMessage(hour, userName, progressPercentage);
             if (message != null) {
                 showNotification(context, message);
-                // Reschedule for next day
-                new NotificationScheduler(context).scheduleNotification(hour, getNotificationTag(hour));
+                // Reschedule for next day - pass false since channels are already created
+                new NotificationScheduler(context, false).scheduleNotification(hour, getNotificationTag(hour));
             }
 
             return Result.success();
@@ -87,8 +87,6 @@ public class NotificationWorker extends Worker {
     }
 
     private void showNotification(Context context, String message) {
-        createNotificationChannel(context);
-
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
@@ -104,19 +102,8 @@ public class NotificationWorker extends Worker {
 
         NotificationManager notificationManager = 
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
-    }
-
-    private void createNotificationChannel(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Water Track Reminders",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            channel.setDescription("Reminders to stay hydrated throughout the day");
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+        if (notificationManager != null) {
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
     }
 

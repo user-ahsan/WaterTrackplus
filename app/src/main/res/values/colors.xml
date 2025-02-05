@@ -16,6 +16,10 @@
     <color name="card_text_primary">@color/benitoite_darkest</color>
     <color name="card_text_secondary">@color/benitoite_dark</color>
     
+    <!-- Dark Theme Colors -->
+    <color name="dark_background">#FF121212</color>
+    <color name="surface_dark">#FF1E1E1E</color>
+    
     <!-- Navigation Colors -->
     <color name="nav_unselected_light">#FF757575</color>
     
@@ -46,4 +50,8 @@
     <color name="widget_droplet_outline">#2196F3</color>
     <color name="widget_droplet_fill">#802196F3</color>
     <color name="widget_droplet_shadow">#1A000000</color>
+    
+    <!-- Additional Colors -->
+    <color name="grey_light">#F5F5F5</color>
+    <color name="benitoite">@color/benitoite_medium</color>
 </resources>

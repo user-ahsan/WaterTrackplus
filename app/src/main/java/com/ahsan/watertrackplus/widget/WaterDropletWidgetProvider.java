@@ -19,15 +19,23 @@ import java.util.Locale;
 import com.ahsan.watertrackplus.MainActivity;
 import com.ahsan.watertrackplus.R;
 import com.ahsan.watertrackplus.data.WaterDbHelper;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.ActivityCompat;
+import android.content.pm.PackageManager;
 
 public class WaterDropletWidgetProvider extends AppWidgetProvider {
     private static final String TAG = "WaterDropletWidget";
+    private static final String WIDGET_PREFS_NAME = "widget_preferences";
+    private static final String KEY_DAILY_GOAL = "daily_goal";
+    private static final String KEY_CURRENT_INTAKE = "current_intake";
+    private static final String KEY_LAST_UPDATE_DATE = "last_update_date";
+    private static final String KEY_QUICK_ADD_AMOUNT = "quick_add_amount";
     private static final float DEFAULT_DAILY_GOAL = 2500f;
+    private static final float DEFAULT_QUICK_ADD = 250f;
     private static final String ACTION_QUICK_ADD = "com.ahsan.watertrackplus.QUICK_ADD";
     private static final String ACTION_VIEW_STATS = "com.ahsan.watertrackplus.VIEW_STATS";
     private static final int ANIMATION_DURATION = 1000;
-    public static final String PREFS_NAME = "WaterTrackWidgetPrefs";
-    public static final String PREF_QUICK_ADD_AMOUNT = "quick_add_amount";
 
     private BroadcastReceiver dataUpdateReceiver;
 
@@ -101,12 +109,12 @@ public class WaterDropletWidgetProvider extends AppWidgetProvider {
         try {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.water_droplet_widget);
             
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            float dailyGoal = prefs.getFloat("daily_goal", DEFAULT_DAILY_GOAL);
-            float currentIntake = prefs.getFloat("current_intake", 0f);
+            SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
+            float dailyGoal = prefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+            float currentIntake = prefs.getFloat(KEY_CURRENT_INTAKE, 0f);
             
             // Check if it's a new day
-            String savedDate = prefs.getString("last_update_date", "");
+            String savedDate = prefs.getString(KEY_LAST_UPDATE_DATE, "");
             String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
                 .format(new java.util.Date());
             
@@ -115,8 +123,8 @@ public class WaterDropletWidgetProvider extends AppWidgetProvider {
                 try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
                     currentIntake = dbHelper.getTodayTotalIntake();
                     prefs.edit()
-                        .putFloat("current_intake", currentIntake)
-                        .putString("last_update_date", currentDate)
+                        .putFloat(KEY_CURRENT_INTAKE, currentIntake)
+                        .putString(KEY_LAST_UPDATE_DATE, currentDate)
                         .apply();
                 }
             }
@@ -196,25 +204,74 @@ public class WaterDropletWidgetProvider extends AppWidgetProvider {
 
     private void handleQuickAdd(Context context) {
         try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            float quickAddAmount = prefs.getFloat(PREF_QUICK_ADD_AMOUNT, 250f);
+            SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
+            // Get the quick add amount from widget settings
+            float quickAddAmount = prefs.getFloat(KEY_QUICK_ADD_AMOUNT, DEFAULT_QUICK_ADD);
+            float dailyGoal = prefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+            float currentIntake = dbHelper.getTodayTotalIntake();
             
-            // Add water intake
-            long id = dbHelper.addWaterIntake((int)quickAddAmount);
+            // Calculate remaining amount needed
+            float remainingAmount = dailyGoal - currentIntake;
+            
+            // If remaining amount is less than requested amount, use remaining amount
+            float amountToAdd = Math.min(quickAddAmount, remainingAmount);
+            
+            // If no more water needed
+            if (remainingAmount <= 0) {
+                // Show warning notification
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "water_track")
+                    .setSmallIcon(R.drawable.ic_water_drop)
+                    .setContentTitle("Daily Goal Completed")
+                    .setContentText("You have already reached your daily water intake goal!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                if (ActivityCompat.checkSelfPermission(context, 
+                    android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    notificationManager.notify(2, builder.build());
+                }
+                return;
+            }
+            
+            // Add water intake with adjusted amount
+            long id = dbHelper.addWaterIntake((int)amountToAdd);
             if (id != -1) {
                 // Update preferences with new values
                 float totalIntake = dbHelper.getTodayTotalIntake();
                 prefs.edit()
-                    .putFloat("current_intake", totalIntake)
-                    .putString("last_update_date", new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                    .putFloat(KEY_CURRENT_INTAKE, totalIntake)
+                    .putString(KEY_LAST_UPDATE_DATE, new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
                         .format(new java.util.Date()))
                     .apply();
                 
                 // Update all widgets
                 WidgetUpdateHelper.updateAllWidgets(context);
+
+                // Show success notification
+                showQuickAddNotification(context, amountToAdd);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error handling quick add", e);
+        }
+    }
+
+    private void showQuickAddNotification(Context context, float amount) {
+        try {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "water_track")
+                .setSmallIcon(R.drawable.ic_water_drop)
+                .setContentTitle("Water Intake Added")
+                .setContentText(String.format(java.util.Locale.US, "Added %.0f ml of water", amount))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            if (ActivityCompat.checkSelfPermission(context, 
+                android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(1, builder.build());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing notification", e);
         }
     }
 

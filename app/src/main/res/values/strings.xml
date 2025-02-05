@@ -3,7 +3,7 @@
     <string name="app_name">WaterTrack+</string>
 
     <!-- Widget Strings -->
-    <string name="widget_description">Water Track widget to monitor and update your daily water intake</string>
+    <string name="widget_description">Track your daily water intake</string>
     <string name="water_intake_title">Water Intake</string>
     <string name="progress_description">Water intake progress</string>
     <string name="remaining_description">Remaining water intake for today</string>
@@ -25,10 +25,10 @@
     <string name="widget_accessibility_quick_add">Quick add water button</string>
 
     <!-- Widget Labels -->
-    <string name="water_droplet_widget_label">Water Droplet</string>
-    <string name="water_track_widget_label">Water Tracker</string>
+    <string name="water_droplet_widget_label">WaterTrack+ Quick Add Widget</string>
+    <string name="water_track_widget_label">WaterTrack+ Detailed Widget</string>
 
     <!-- Widget Descriptions -->
-    <string name="water_droplet_widget_description">Quick water intake tracking with a single tap</string>
-    <string name="water_track_widget_description">Track your daily water intake with detailed progress</string>
+    <string name="water_droplet_widget_description">Quick add water intake with a single tap</string>
+    <string name="water_track_widget_description">Track your daily water intake with detailed statistics</string>
 </resources>

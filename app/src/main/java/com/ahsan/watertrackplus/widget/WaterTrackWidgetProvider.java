@@ -33,12 +33,14 @@ import java.util.concurrent.TimeUnit;
 
 public class WaterTrackWidgetProvider extends AppWidgetProvider {
     private static final String TAG = "WaterTrackWidget";
-    public static final String PREFS_NAME = "WaterTrackWidgetPrefs";
-    public static final String PREF_QUICK_ADD_AMOUNT = "quick_add_amount";
-    public static final String WIDGET_UPDATE_WORK = "water_track_widget_update_work";
-    private static final int MIN_UPDATE_INTERVAL = 15; // minutes
-    private static final float DEFAULT_DAILY_GOAL = 2500f; // ml
-    private static final float DEFAULT_QUICK_ADD = 250f; // ml
+    private static final String WIDGET_PREFS_NAME = "widget_preferences";
+    private static final String KEY_QUICK_ADD_AMOUNT = "quick_add_amount";
+    private static final String KEY_CURRENT_INTAKE = "current_intake";
+    private static final String KEY_LAST_UPDATE_DATE = "last_update_date";
+    private static final String KEY_DAILY_GOAL = "daily_goal";
+    private static final String WIDGET_UPDATE_WORK = "water_track_widget_update_work";
+    private static final float DEFAULT_QUICK_ADD = 250f;
+    private static final float DEFAULT_DAILY_GOAL = 2500f;
     private static final java.text.SimpleDateFormat DATE_FORMAT;
     
     static {
@@ -101,7 +103,10 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
         String action = intent.getAction();
         if (action != null) {
             if (action.equals("QUICK_ADD_WATER")) {
-                handleQuickAdd(context, intent.getFloatExtra("amount", DEFAULT_QUICK_ADD));
+                // Get the quick add amount from preferences
+                SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
+                float quickAddAmount = prefs.getFloat(KEY_QUICK_ADD_AMOUNT, DEFAULT_QUICK_ADD);
+                handleQuickAdd(context, quickAddAmount);
             } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
                 // Force update all widgets
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -117,21 +122,25 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
 
     private void handleQuickAdd(Context context, float amount) {
         try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
             
             // Get the latest values from database and preferences
-            float dailyGoal = prefs.getFloat("daily_goal", DEFAULT_DAILY_GOAL);
+            float dailyGoal = prefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
             float currentIntake = dbHelper.getTodayTotalIntake();
             
-            // Check if adding this amount would exceed the daily goal
-            if (currentIntake + amount > dailyGoal) {
+            // Calculate remaining amount needed
+            float remainingAmount = dailyGoal - currentIntake;
+            
+            // If remaining amount is less than requested amount, use remaining amount
+            float amountToAdd = Math.min(amount, remainingAmount);
+            
+            // If no more water needed
+            if (remainingAmount <= 0) {
                 // Show warning notification
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "water_track")
                     .setSmallIcon(R.drawable.ic_water_drop)
-                    .setContentTitle("Daily Goal Limit")
-                    .setContentText(String.format(java.util.Locale.US, 
-                        "Cannot exceed daily goal of %.0f ml (Current: %.0f ml)", 
-                        dailyGoal, currentIntake))
+                    .setContentTitle("Daily Goal Completed")
+                    .setContentText("You have already reached your daily water intake goal!")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true);
 
@@ -143,8 +152,8 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 return;
             }
             
-            // Add water intake record
-            long id = dbHelper.addWaterIntake((int)amount);
+            // Add water intake record with adjusted amount
+            long id = dbHelper.addWaterIntake((int)amountToAdd);
             
             if (id != -1) {
                 // Get updated values after adding
@@ -152,15 +161,15 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 
                 // Update widget preferences with latest values
                 prefs.edit()
-                    .putFloat("current_intake", totalIntake)
-                    .putString("last_update_date", getCurrentDate())
+                    .putFloat(KEY_CURRENT_INTAKE, totalIntake)
+                    .putString(KEY_LAST_UPDATE_DATE, getCurrentDate())
                     .apply();
 
                 // Update all widgets using helper
                 WidgetUpdateHelper.updateAllWidgets(context);
                 
                 // Show success notification
-                showQuickAddNotification(context, amount);
+                showQuickAddNotification(context, amountToAdd);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error handling quick add", e);
@@ -190,10 +199,10 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.water_track_widget);
         
         try {
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
             
             // Check if it's a new day or first launch
-            String savedDate = prefs.getString("last_update_date", "");
+            String savedDate = prefs.getString(KEY_LAST_UPDATE_DATE, "");
             String currentDate = getCurrentDate();
             
             // If it's a new day or first launch, initialize the database
@@ -202,15 +211,20 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                     float totalIntake = dbHelper.getTodayTotalIntake();
                     
                     prefs.edit()
-                        .putFloat("current_intake", totalIntake)
-                        .putString("last_update_date", currentDate)
+                        .putFloat(KEY_CURRENT_INTAKE, totalIntake)
+                        .putString(KEY_LAST_UPDATE_DATE, currentDate)
                         .apply();
                 }
             }
 
-            float dailyGoal = prefs.getFloat("daily_goal", DEFAULT_DAILY_GOAL);
-            float currentIntake = prefs.getFloat("current_intake", 0);
-            float quickAddAmount = prefs.getFloat(PREF_QUICK_ADD_AMOUNT, DEFAULT_QUICK_ADD);
+            float dailyGoal = prefs.getFloat(KEY_DAILY_GOAL, DEFAULT_DAILY_GOAL);
+            float currentIntake = prefs.getFloat(KEY_CURRENT_INTAKE, 0);
+            float quickAddAmount = prefs.getFloat(KEY_QUICK_ADD_AMOUNT, DEFAULT_QUICK_ADD);
+
+            // Calculate remaining amount
+            float remainingAmount = Math.max(0, dailyGoal - currentIntake);
+            // Use the smaller of quickAddAmount or remainingAmount
+            float adjustedQuickAdd = Math.min(quickAddAmount, remainingAmount);
 
             // Update progress views
             updateProgressViews(views, context, currentIntake, dailyGoal);
@@ -218,7 +232,7 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
             // Setup quick add button with direct widget action
             Intent quickAddIntent = new Intent(context, WaterTrackWidgetProvider.class)
                 .setAction("QUICK_ADD_WATER")
-                .putExtra("amount", quickAddAmount);
+                .putExtra("amount", adjustedQuickAdd);
             
             int flags = PendingIntent.FLAG_UPDATE_CURRENT;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -232,7 +246,13 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                 flags
             );
             
-            String buttonText = String.format(java.util.Locale.US, "+ %.0f ml", quickAddAmount);
+            // Update button text to show adjusted amount
+            String buttonText;
+            if (remainingAmount <= 0) {
+                buttonText = "Goal Complete!";
+            } else {
+                buttonText = String.format(java.util.Locale.US, "+ %.0f ml", adjustedQuickAdd);
+            }
             views.setOnClickPendingIntent(R.id.widget_quick_add_button, quickAddPendingIntent);
             views.setTextViewText(R.id.widget_quick_add_button, buttonText);
 
@@ -252,16 +272,16 @@ public class WaterTrackWidgetProvider extends AppWidgetProvider {
                     .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
                     .build();
 
-            PeriodicWorkRequest updateWork = new PeriodicWorkRequest.Builder(
-                    WidgetUpdateWorker.class, MIN_UPDATE_INTERVAL, TimeUnit.MINUTES)
-                    .setConstraints(constraints)
-                    .setInitialDelay(MIN_UPDATE_INTERVAL, TimeUnit.MINUTES)
-                    .build();
+            PeriodicWorkRequest updateRequest = new PeriodicWorkRequest.Builder(
+                WidgetUpdateWorker.class,
+                15, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build();
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                    WIDGET_UPDATE_WORK,
-                    ExistingPeriodicWorkPolicy.REPLACE,
-                    updateWork
+                WIDGET_UPDATE_WORK,
+                ExistingPeriodicWorkPolicy.UPDATE,
+                updateRequest
             );
             
             Log.d(TAG, "Widget updates scheduled");

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="250dp"
+    android:height="110dp"
+    android:viewportWidth="250"
+    android:viewportHeight="110">
+
+    <!-- Background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0h250v110h-250z"/>
+
+    <!-- Progress Circle Background -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M55,55m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0"/>
+
+    <!-- Progress Circle Fill -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M55,55m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0"/>
+
+    <!-- Stats Container -->
+    <path
+        android:fillColor="#F5F5F5"
+        android:pathData="M110,15h125v80h-125z"/>
+
+    <!-- Stats Lines -->
+    <path
+        android:strokeColor="#E0E0E0"
+        android:strokeWidth="2"
+        android:pathData="M120,35h105"/>
+
+    <path
+        android:strokeColor="#E0E0E0"
+        android:strokeWidth="2"
+        android:pathData="M120,55h105"/>
+
+    <path
+        android:strokeColor="#E0E0E0"
+        android:strokeWidth="2"
+        android:pathData="M120,75h105"/>
+
+    <!-- Quick Add Button with rounded corners -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M35,95 L215,95 Q235,95 235,115 L235,115 Q235,135 215,135 L35,135 Q15,135 15,115 L15,115 Q15,95 35,95 Z"/>
+</vector> 

@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="110dp"
-    android:height="110dp"
-    android:viewportWidth="110"
-    android:viewportHeight="110">
+    android:width="180dp"
+    android:height="40dp"
+    android:viewportWidth="180"
+    android:viewportHeight="40">
 
+    <!-- Background -->
     <path
-        android:fillColor="#3F51B5"
-        android:pathData="M55,15 C55,15 25,50 25,75 C25,93.5 38.5,107 55,107 C71.5,107 85,93.5 85,75 C85,50 55,15 55,15 Z"
-        android:strokeWidth="2"
-        android:strokeColor="#1A237E" />
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0h180v40h-180z"/>
 
+    <!-- Water Droplet -->
     <path
-        android:fillColor="#64B5F6"
-        android:pathData="M55,15 C55,15 25,50 25,75 C25,93.5 38.5,107 55,107 C71.5,107 85,93.5 85,75 C85,50 55,15 55,15 Z"
-        android:fillAlpha="0.5" />
+        android:fillColor="#2196F3"
+        android:pathData="M30,20m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0"
+        android:alpha="0.8"/>
 
+    <!-- Progress Bar Background -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M60,18h100v4h-100z"/>
+
+    <!-- Progress Bar Fill -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M60,18h70v4h-70z"/>
 </vector> 

@@ -9,6 +9,9 @@ import com.ahsan.watertrackplus.data.WaterDbHelper;
 
 public class WidgetUpdateHelper {
     public static final String ACTION_DATA_UPDATED = "com.ahsan.watertrackplus.DATA_UPDATED";
+    private static final String WIDGET_PREFS_NAME = "widget_preferences";
+    private static final String KEY_QUICK_ADD_AMOUNT = "quick_add_amount";
+    private static final float DEFAULT_QUICK_ADD = 250f;
 
     public static void updateAllWidgets(Context context) {
         // First update shared preferences with latest data
@@ -44,18 +47,20 @@ public class WidgetUpdateHelper {
 
     private static void updateSharedPreferences(Context context) {
         try {
-            SharedPreferences prefs = context.getSharedPreferences(
-                WaterTrackWidgetProvider.PREFS_NAME, 
-                Context.MODE_PRIVATE
-            );
+            // Get the widget preferences
+            SharedPreferences widgetPrefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
             
             try (WaterDbHelper dbHelper = new WaterDbHelper(context)) {
                 float totalIntake = dbHelper.getTodayTotalIntake();
+                // Get the quick add amount from widget preferences
+                float quickAddAmount = widgetPrefs.getFloat(KEY_QUICK_ADD_AMOUNT, DEFAULT_QUICK_ADD);
                 String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
                     .format(new java.util.Date());
                 
-                prefs.edit()
+                // Update all relevant preferences
+                widgetPrefs.edit()
                     .putFloat("current_intake", totalIntake)
+                    .putFloat(KEY_QUICK_ADD_AMOUNT, quickAddAmount)
                     .putString("last_update_date", currentDate)
                     .apply();
             }
